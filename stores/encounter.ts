@@ -71,7 +71,7 @@ export const useEncounterStore = defineStore('encounter', {
         },
         async toggleJob(abbr: JobAbbrevation) {
             if (!this.jobs.some(job => job.abbr === abbr)) {
-                const response = await fetch(`/data/jobs/${abbr}.json`);
+                const response = await fetch(`/data/jobs/${abbr.toLowerCase()}.json`);
                 if (!response.ok) {
                     // error
                 }
