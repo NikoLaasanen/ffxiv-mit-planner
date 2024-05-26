@@ -1,11 +1,16 @@
 {
+    "title": "Samurai",
     "abbr": "SAM",
+    "role": "dps",
+    "subrole": "melee",
+    "icon": "icons/jobs/Samurai.png",
     "abilities": [
         {
             "title": "Feint",
             "type": "mitigation",
             "duration": 10,
-            "cooldown": 90
+            "cooldown": 90,
+            "icon": "icons/abilities/feint.png"
         }
     ]
 }

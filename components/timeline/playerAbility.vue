@@ -1,13 +1,15 @@
 <template>
-    <span v-for="ability in abilities" :for="ability.title"
-        :class="{ active: isAbilityActive(getActivePlayerAbility(ability)) }">
-        <input type="checkbox" :checked="isAbilityTriggered(getActivePlayerAbility(ability))"
+    <span v-for="ability in abilities" :for="ability.title" class="w-6 h-6 flex items-center justify-center">
+        <Icon v-if="isAbilityActive(getActivePlayerAbility(ability))" icon="radix-icons:check" />
+        <Checkbox v-else :checked="isAbilityTriggered(getActivePlayerAbility(ability))"
             :disabled="isAbilityOnCooldown(getActivePlayerAbility(ability))"
-            @change="encounterStore.togglePlayerAbility(getActivePlayerAbility(ability))">
+            @click="encounterStore.togglePlayerAbility(getActivePlayerAbility(ability))" />
     </span>
 </template>
 
 <script lang="ts" setup>
+import { Icon } from '@iconify/vue'
+
 const props = defineProps({
     time: Number,
     owner: String as PropType<JobAbbrevation>,
@@ -21,9 +23,3 @@ const getActivePlayerAbility = (ability: JobAbility) => {
     return { activation: props.time, owner: props.owner, ability: ability } as ActivePlayerAbility
 }
 </script>
-
-<style scoped>
-.active {
-    background-color: lawngreen;
-}
-</style>

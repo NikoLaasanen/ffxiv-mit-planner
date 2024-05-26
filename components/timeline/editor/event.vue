@@ -1,22 +1,50 @@
 <template>
-    <form @submit.prevent="onSubmit">
-        <label for="new-event-time">Time</label>
-        <input type="number" id="new-event-time" v-model="time">
-        <label for="new-event-source">Source</label>
-        <input type="text" id="new-event-source" v-model="source">
-        <label for="new-event-title">Title</label>
-        <input type="text" id="new-event-title" v-model="title">
-        <label for="new-event-damage-type">Damage type</label>
-        <select id="new-event-damage-type" v-model="damageType">
-            <option value="none">None</option>
-            <option value="magical">Magical</option>
-            <option value="physical">Physical</option>
-        </select>
-        <input type="submit" value="Add">
-    </form>
+    <Card>
+        <CardHeader>
+            <CardTitle>Add new event to timeline</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <form @submit.prevent="onSubmit">
+                <Label for="new-event-time">Time</Label>
+                <Input type="number" id="new-event-time" v-model="time" />
+                <Label for="new-event-source">Source</Label>
+                <Input type="text" id="new-event-source" v-model="source" />
+                <Label for="new-event-title">Title</Label>
+                <Input type="text" id="new-event-title" v-model="title" />
+                <Label for="new-event-damage-type">Damage type</Label>
+                <Select id="new-event-damage-type" v-model="damageType">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select damage type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="magical">Magical</SelectItem>
+                            <SelectItem value="physical">Physical</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Button type="submit" class="mt-4">Add</Button>
+            </form>
+        </CardContent>
+    </Card>
 </template>
 
 <script lang="ts" setup>
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+
 const emit = defineEmits<{
     (e: 'newEvent', timelineEvent: TimelineEvent): void
 }>()

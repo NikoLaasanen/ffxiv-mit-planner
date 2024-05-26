@@ -1,6 +1,10 @@
 interface Job {
+    title: string,
     abbr: JobAbbrevation,
-    abilities: JobAbility[]
+    role: JobRole,
+    subrole?: JosSubRole,
+    icon?: string,
+    abilities: JobAbility[],
 }
 
 type TankAbbr = 'PLD' | 'WAR' | 'DRK' | 'GNB';
@@ -12,11 +16,15 @@ type DpsAbbr = MeleeDpsAbbr | CasterDpsAbbr | RangedDpsAbbr;
 
 type JobAbbrevation = TankAbbr | HealerAbbr | DpsAbbr;
 
+type JobRole = 'tank' | 'healer' | 'dps';
+type JosSubRole = 'regen' | 'shield' | 'melee' | 'caster' | 'ranged';
+
 interface JobAbility {
     title: string,
     type: JobAbilityType,
     duration: number,
-    cooldown: number
+    cooldown: number,
+    icon?: string
 }
 
 type JobAbilityType = 'mitigation' | 'interrupt' | 'buff' | 'debuff';

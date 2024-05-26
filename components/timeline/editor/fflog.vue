@@ -1,15 +1,42 @@
 <template>
-    <textarea v-model="rawData" @change="doParse"></textarea>
+    <Card>
+        <CardHeader>
+            <CardTitle>Import from FFlogs</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <Textarea class="mb-4" v-model="rawData" @change="doParse" />
 
-    <label for="merge-abilities">Merge abilities</label>
-    <select id="merge-abilities" v-model="mergeBy">
-        <option value="time">Time</option>
-        <option value="time-source">Time and source</option>
-        <option value="none">Don't merge</option>
-    </select>
+            <Label for="merge-abilities">Merge abilities by</Label>
+            <Select id="merge-abilities" v-model="mergeBy">
+                <SelectTrigger>
+                    <SelectValue placeholder="Select merge method" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem value="time">Time</SelectItem>
+                        <SelectItem value="time-source">Time and source</SelectItem>
+                        <SelectItem value="none">Don't merge</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </CardContent>
+    </Card>
 </template>
 
 <script lang="ts" setup>
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+
 const emit = defineEmits<{
     (e: 'newTimeline', timelineEvent: TimelineEvent[]): void
 }>()
@@ -69,9 +96,5 @@ const getFFlogsTimeInSeconds = (time: string) => {
         return Math.round(Number(minutes) * 60 + Number(seconds) + Number(milliseconds) / 1000);
     }
     return -1;
-}
-
-const getFFlogsEventSource = (event: string) => {
-
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
-    <div v-if="item" class="row">
-        <div class="item">{{ timeInMinutes }}</div>
-        <div class="item">{{ item.source }}</div>
-        <div class="item">{{ item.ability.title }}</div>
-        <div v-for="job in jobs" :key="job.abbr" class="item">
+    <div v-if="item" class="grid grid-cols-subgrid gap-x-3 hover:bg-muted">
+        <div>{{ timeInMinutes }}</div>
+        <div>{{ item.source }}</div>
+        <div>{{ item.ability.title }}</div>
+        <div v-for="job in jobs" :key="job.abbr" class="flex gap-1">
             <TimelinePlayerAbility :abilities="job.abilities" :time="item.time" :owner="job.abbr" />
         </div>
     </div>
@@ -16,6 +16,7 @@ const props = defineProps({
 
 const encounterStore = useEncounterStore();
 const { jobs } = storeToRefs(encounterStore);
+const jobCount = computed(() => jobs.value.length);
 
 const timeInMinutes = computed(() => {
     const seconds = props.item?.time ?? 0;
@@ -35,17 +36,7 @@ const timeInMinutes = computed(() => {
 </script>
 
 <style scoped>
-.row {
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 1/-1;
-}
-
-.row:hover {
-    background-color: bisque;
-}
-
-.row .item {
-    border: 1px solid gray;
+.grid-cols-subgrid {
+    grid-column: span v-bind(jobCount + 3);
 }
 </style>
