@@ -1,0 +1,11 @@
+{
+    "abbr": "SAM",
+    "abilities": [
+        {
+            "title": "Feint",
+            "type": "mitigation",
+            "duration": 10,
+            "cooldown": 90
+        }
+    ]
+}

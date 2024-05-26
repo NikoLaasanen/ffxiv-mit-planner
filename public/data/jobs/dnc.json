@@ -1,0 +1,17 @@
+{
+    "abbr": "DNC",
+    "abilities": [
+        {
+            "title": "Shield Samba",
+            "type": "mitigation",
+            "duration": 15,
+            "cooldown": 90
+        },
+        {
+            "title": "Devilment",
+            "type": "buff",
+            "duration": 20,
+            "cooldown": 120
+        }
+    ]
+}

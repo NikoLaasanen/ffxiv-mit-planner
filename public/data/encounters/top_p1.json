@@ -1,0 +1,98 @@
+[
+    {
+        "time": 29,
+        "source": "Omega",
+        "ability": {
+            "title": "Blaster 1",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 29,
+        "source": "Omega",
+        "ability": {
+            "title": "Storage Violation 1",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 38,
+        "source": "Omega",
+        "ability": {
+            "title": "Blaster 2",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 38,
+        "source": "Omega",
+        "ability": {
+            "title": "Storage Violation 2",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 47,
+        "source": "Omega",
+        "ability": {
+            "title": "Blaster 3",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 47,
+        "source": "Omega",
+        "ability": {
+            "title": "Storage Violation 3",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 55,
+        "source": "Omega",
+        "ability": {
+            "title": "Blaster 4",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 55,
+        "source": "Omega",
+        "ability": {
+            "title": "Storage Violation 4",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 69,
+        "source": "Omega",
+        "ability": {
+            "title": "Pantokrator",
+            "damageType": "none"
+        }
+    },
+    {
+        "time": 75,
+        "source": "Omega",
+        "ability": {
+            "title": "Flamethrower",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 82,
+        "source": "Omega",
+        "ability": {
+            "title": "Ballistic Missile",
+            "damageType": "magical"
+        }
+    },
+    {
+        "time": 128,
+        "source": "Omega",
+        "ability": {
+            "title": "Atomic Ray",
+            "damageType": "magical"
+        }
+    }
+]

@@ -1,0 +1,23 @@
+{
+    "abbr": "PLD",
+    "abilities": [
+        {
+            "title": "Rampart",
+            "type": "mitigation",
+            "duration": 20,
+            "cooldown": 90
+        },
+        {
+            "title": "Sentinel",
+            "type": "mitigation",
+            "duration": 15,
+            "cooldown": 120
+        },
+        {
+            "title": "Interject",
+            "type": "interrupt",
+            "duration": 0,
+            "cooldown": 30
+        }
+    ]
+}
