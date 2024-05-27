@@ -43,15 +43,7 @@ export const useEncounterStore = defineStore('encounter', {
         },
     },
     actions: {
-        async loadTimeline(encounterName: string) {
-            const response = await fetch(`/data/encounters/${encounterName}.json`);
-            if (!response.ok) {
-                // error
-            }
-            const timelineData = await response.json() as TimelineEvent[];
-            this.insertTimeline(timelineData);
-        },
-        insertTimeline(newTimeline: TimelineEvent[]) {
+        setTimeline(newTimeline: TimelineEvent[]) {
             this.timeline = newTimeline;
         },
         addTimelineEvent(event: TimelineEvent) {

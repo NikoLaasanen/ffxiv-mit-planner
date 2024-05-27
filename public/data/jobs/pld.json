@@ -2,28 +2,28 @@
     "title": "Paladin",
     "abbr": "PLD",
     "role": "tank",
-    "icon": "icons/jobs/Paladin.png",
+    "icon": "/icons/jobs/Paladin.png",
     "abilities": [
         {
             "title": "Rampart",
             "type": "mitigation",
             "duration": 20,
             "cooldown": 90,
-            "icon": "icons/abilities/rampart.png"
+            "icon": "/icons/abilities/rampart.png"
         },
         {
             "title": "Sentinel",
             "type": "mitigation",
             "duration": 15,
             "cooldown": 120,
-            "icon": "icons/abilities/sentinel.png"
+            "icon": "/icons/abilities/sentinel.png"
         },
         {
             "title": "Interject",
             "type": "interrupt",
             "duration": 0,
             "cooldown": 30,
-            "icon": "icons/abilities/interject.png"
+            "icon": "/icons/abilities/interject.png"
         }
     ]
 }

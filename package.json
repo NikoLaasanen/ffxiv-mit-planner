@@ -14,15 +14,18 @@
     "@vueuse/core": "^10.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "firebase": "^10.12.1",
     "lucide-vue-next": "^0.379.0",
     "nuxt": "^3.11.2",
+    "nuxt-vuefire": "^1.0.2",
     "pinia": "^2.1.7",
     "radix-vue": "^1.8.2",
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vue": "^3.4.27",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.2",
+    "vuefire": "^3.1.23"
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.14",

@@ -1,3 +1,12 @@
+interface Timeline {
+    id?: string,
+    title: string,
+    contentType: ContentType,
+    events: TimelineEvent[],
+}
+
+type ContentType = 'unknown' | 'expert' | 'savage' | 'ultimate';
+
 interface TimelineEvent {
     time: number,
     source: string,
@@ -9,10 +18,10 @@ interface BossAbility {
     damageType: DamageType
 }
 
+type DamageType = 'none' | 'magical' | 'physical';
+
 interface ActivePlayerAbility {
     activation: number,
     owner: JobAbbrevation,
     ability: JobAbility
 }
-
-type DamageType = 'none' | 'magical' | 'physical';

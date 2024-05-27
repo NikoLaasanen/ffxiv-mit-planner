@@ -21,7 +21,6 @@
                 </div>
             </ScrollArea>
             <div class="mt-2 flex gap-2">
-                <Button type="button" @click="encounterStore.loadTimeline('top_p1')">Load TOP p1</Button>
                 <Button v-for="jobAbbr in availableJobs" type="button" @click="encounterStore.toggleJob(jobAbbr)">
                     Add {{ jobAbbr }}
                 </Button>
