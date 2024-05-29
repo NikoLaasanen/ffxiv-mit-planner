@@ -37,7 +37,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 const emit = defineEmits<{
-    (e: 'newTimeline', timelineEvent: TimelineEvent[]): void
+    (e: 'newTimeline', timelineEvents: TimelineEvent[]): void
 }>()
 
 const rawData = ref('');

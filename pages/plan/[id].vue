@@ -1,23 +1,100 @@
 <template>
-    <div class="flex flex-col gap-4">
-        <Timeline />
+    <LoadingIcon v-if="pending" />
+    <div v-else-if="plan" class="flex flex-col gap-4">
+        <Card>
+            <CardHeader>
+                <CardTitle>
+                    <PlanTitleEditor :title="plan.title" @update:title="newTitle => updateTitle(undefined, newTitle)" />
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
+                    @change:active-ability="toggleAbility" />
+            </CardContent>
+        </Card>
+
+        <Button @click="updateActiveAbilities">Save</Button>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { collection, doc } from 'firebase/firestore'
+import { useAsyncState } from '@vueuse/core'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/components/ui/toast/use-toast'
+import { collection, doc, updateDoc } from 'firebase/firestore'
+import { JobKey } from '~/injectionkeys'
+import { isAbilityActivated } from '@/lib/utils'
+
+const { toast } = useToast()
 
 const route = useRoute();
 const db = useFirestore();
 
-const timelineSource = computed(() =>
-    doc(collection(db, 'timeline'), String(route.params.id))
+const jobRef = collection(db, 'job');
+const jobs = useCollection<Job>(jobRef);
+provide(JobKey, jobs);
+
+const planRef = collection(db, 'plan');
+const jobAbilityRef = collection(db, 'jobability');
+const planSource = computed(() =>
+    doc(planRef, String(route.params.id))
 )
 
-const timeline = useDocument<Timeline>(timelineSource);
+const { data: plan, pending } = useDocument<Plan>(planSource);
 
-if (timeline.value?.events) {
-    const encounterStore = useEncounterStore();
-    encounterStore.setTimeline(timeline.value?.events);
+const toggleAbility = (activation: ActiveAbility) => {
+    if (plan.value && plan.value.activeAbilities.length > 0) {
+        if (!isAbilityActivated(activation, plan.value?.activeAbilities)) {
+            plan.value.activeAbilities.push(activation);
+        } else {
+            plan.value.activeAbilities = plan.value.activeAbilities.filter(item =>
+                item.source !== activation.source ||
+                item.time !== activation.time ||
+                JSON.stringify(item.ability) !== JSON.stringify(activation.ability)
+            )
+        }
+    }
 }
+
+const {
+    execute: updateTitle,
+    isLoading: isUpdatingTitleAbilities
+} = useAsyncState(
+    (newTitle: string) => {
+        console.log(newTitle)
+        return updateDoc(planSource.value, {
+            title: newTitle
+        }).then(() => {
+            toast({ description: 'Title updated' });
+        }).catch(() => {
+            toast({ description: 'Update failed', variant: 'destructive' });
+        })
+    },
+    null,
+    { immediate: false }
+)
+
+const {
+    execute: updateActiveAbilities,
+    isLoading: isUpdatingActiveAbilities
+} = useAsyncState(
+    () => {
+        const updatedData = plan.value?.activeAbilities.map(obj => {
+            let newData = { ...obj };
+            // @ts-ignore: Create reference to document for db update
+            newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase())
+            return newData;
+        })
+        return updateDoc(planSource.value, {
+            activeAbilities: updatedData
+        }).then(() => {
+            toast({ description: 'Plan updated' });
+        }).catch(() => {
+            toast({ description: 'Update failed', variant: 'destructive' });
+        })
+    },
+    null,
+    { immediate: false }
+)
 </script>

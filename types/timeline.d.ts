@@ -19,9 +19,3 @@ interface BossAbility {
 }
 
 type DamageType = 'none' | 'magical' | 'physical';
-
-interface ActivePlayerAbility {
-    activation: number,
-    owner: JobAbbrevation,
-    ability: JobAbility
-}

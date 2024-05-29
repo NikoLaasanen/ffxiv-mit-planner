@@ -13,7 +13,7 @@
                 <CommandList>
                     <CommandGroup v-for="(group) in groups" :key="group.title" :heading="group.title">
                         <CommandItem v-for="timeline in group.timelines" :key="timeline.id" :value="timeline.title"
-                            @select="loadTimeline(timeline)">
+                            @select="selectTimeline(timeline)">
                             {{ timeline.title }}
                         </CommandItem>
                     </CommandGroup>
@@ -41,10 +41,12 @@ import {
 } from '@/components/ui/popover'
 import { collection, doc } from 'firebase/firestore'
 
-const open = ref(false);
-const selection = ref('none');
+const emit = defineEmits<{
+    (e: 'change:timeline', timeline: Timeline): void
+}>()
 
-const encounterStore = useEncounterStore();
+const open = ref(false);
+const selection = ref('');
 
 const db = useFirestore();
 const timelinesRef = collection(db, 'timeline');
@@ -75,8 +77,8 @@ const getContentTypeTitle = (contentType: ContentType) => {
     }
 }
 
-const loadTimeline = (timeline: Timeline) => {
+const selectTimeline = (timeline: Timeline) => {
     open.value = false;
-    encounterStore.setTimeline(timeline.events);
+    emit('change:timeline', timeline);
 }
 </script>
