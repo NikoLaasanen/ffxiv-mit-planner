@@ -39,7 +39,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { collection, doc } from 'firebase/firestore'
+import { collection, query, where } from 'firebase/firestore'
 
 const emit = defineEmits<{
     (e: 'change:timeline', timeline: Timeline): void
@@ -50,7 +50,8 @@ const selection = ref('');
 
 const db = useFirestore();
 const timelinesRef = collection(db, 'timeline');
-const timelines = useCollection(timelinesRef);
+const timelinesQuery = query(timelinesRef, where('tpl', '==', true));
+const timelines = useCollection(timelinesQuery);
 
 const groups = computed(() => {
     const grouped = timelines.value.reduce((result, obj) => {

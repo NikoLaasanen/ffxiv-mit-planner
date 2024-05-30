@@ -3,6 +3,9 @@
     <div v-else-if="plan" class="flex flex-col gap-4">
         <Card>
             <CardHeader>
+                <CardDescription>
+                    {{ plan.timeline.title }}
+                </CardDescription>
                 <CardTitle>
                     <PlanTitleEditor :title="plan.title" @update:title="newTitle => updateTitle(undefined, newTitle)" />
                 </CardTitle>
@@ -20,7 +23,7 @@
 <script lang="ts" setup>
 import { useAsyncState } from '@vueuse/core'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { collection, doc, updateDoc } from 'firebase/firestore'
 import { JobKey } from '~/injectionkeys'

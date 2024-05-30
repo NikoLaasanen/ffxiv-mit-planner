@@ -25,6 +25,7 @@ const props = defineProps({
     timelineEvent: Object as PropType<TimelineEvent>,
     activeAbilities: Object as PropType<ActiveAbility[]>
 });
+console.log(props.activeAbilities)
 
 const rowTime = computed(() => props.timelineEvent?.time ?? 0)
 

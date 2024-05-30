@@ -2,9 +2,11 @@
     <Card>
         <CardHeader>
             <CardTitle>Import from FFlogs</CardTitle>
+            <CardDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
+            </CardDescription>
         </CardHeader>
         <CardContent>
-            <Textarea class="mb-4" v-model="rawData" @change="doParse" />
+            <Textarea class="mb-4" v-model="rawData"></textarea>
 
             <Label for="merge-abilities">Merge abilities by</Label>
             <Select id="merge-abilities" v-model="mergeBy">
@@ -19,6 +21,8 @@
                     </SelectGroup>
                 </SelectContent>
             </Select>
+
+            <Button class="mt-4" @click="doParse" :disabled="rawData.trim().length === 0">Import</Button>
         </CardContent>
     </Card>
 </template>
@@ -82,6 +86,7 @@ const doParse = () => {
             }
         }
 
+        rawData.value = '';
         emit('newTimeline', timeline);
     }
 };

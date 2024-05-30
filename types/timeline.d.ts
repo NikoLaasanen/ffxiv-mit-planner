@@ -3,6 +3,7 @@ interface Timeline {
     title: string,
     contentType: ContentType,
     events: TimelineEvent[],
+    tpl: boolean
 }
 
 type ContentType = 'unknown' | 'expert' | 'savage' | 'ultimate';
