@@ -19,7 +19,7 @@
                 </SelectGroup>
             </SelectContent>
         </Select>
-        <Button type="submit" class="mt-4">Add</Button>
+        <Button type="submit" class="mt-4" :disabled="!canSubmit">Add</Button>
     </form>
 </template>
 
@@ -32,6 +32,8 @@ const time = ref(0);
 const title = ref("");
 const source = ref("");
 const damageType = ref("none" as DamageType);
+
+const canSubmit = computed(() => title.value.length > 0 && source.value.length > 0)
 
 const onSubmit = () => {
     emit('newEvent', {

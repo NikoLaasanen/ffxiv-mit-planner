@@ -1,11 +1,12 @@
 <template>
-    <p class="pb-2">Recently added</p>
     <div v-if="pending">
         <LoadingIcon />
     </div>
     <ul v-else-if="latestPlans.length > 0" class="flex flex-wrap place-content-center gap-2">
         <li v-for="plan in latestPlans" :key="plan.id">
-            <Button>{{ plan.title }}</Button>
+            <Button as-child>
+                <NuxtLink :to="'/plan/' + plan.id">{{ plan.title }}</NuxtLink>
+            </Button>
         </li>
     </ul>
     <p v-else>

@@ -27,17 +27,24 @@
             </div>
         </template>
         <Card v-else>
-            <CardHeader class="pb-0">
-                <CardTitle class="sr-only">Welcome</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent class="p-6 bg-ffimage">
                 <div class="grid place-content-center gap-6 text-center">
-                    <h2 class="text-6xl">Welcome!</h2>
-                    <p>Let's start by creating a new timeline</p>
+                    <h2 class="text-6xl text-white">Welcome!</h2>
                     <div>
+                        <p class="pb-2 text-white">Let's start by creating a new timeline</p>
                         <TimelineLoader @change:timeline="loadTimeline" title="Load a template" />
                     </div>
-                    <PlanLatest />
+                    <Separator />
+                    <div>
+                        <p class="pb-2 text-white">Recently added</p>
+                        <PlanLatest />
+                    </div>
+                    <div v-if="latestPlans.length > 0">
+                        <p class="pb-2 text-white">My latest</p>
+                        <Button v-for="latest in latestPlans" as-child>
+                            <NuxtLink :to="'/plan/' + latest.id">{{ latest.title }}</NuxtLink>
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
         </Card>
@@ -91,6 +98,8 @@ const { toast } = useToast()
 
 // Get plan store and set initial title
 const planStore = usePlanStore();
+const latestPlansStore = useLatestPlansStore();
+const { latest: latestPlans } = storeToRefs(latestPlansStore);
 const { plan } = storeToRefs(planStore)
 const planTitle = ref('My Awesome Plan');
 
@@ -146,6 +155,7 @@ const {
         }).then((newPlan) => {
             toast({ description: 'Plan saved' });
             planStore.clearPlan();
+            latestPlans.value.push({ title: planTitle.value, id: newPlan.id });
             navigateTo('/plan/' + newPlan.id)
         }).catch(() => {
             toast({ description: 'Saving failed', variant: 'destructive' });
@@ -155,3 +165,12 @@ const {
     { immediate: false }
 )
 </script>
+
+<style scoped>
+.bg-ffimage {
+    background-image: url(https://lds-img.finalfantasyxiv.com/h/1/EPptkGFMvUVk1nm2TndbZGLiW0.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-image: linear-gradient(hsl(0 0% 0% / .3), hsl(0 0% 0% / .5)) fill 1;
+}
+</style>
