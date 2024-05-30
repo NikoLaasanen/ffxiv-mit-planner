@@ -3,8 +3,8 @@
         <div class="timeline p-2 grid">
             <div class="bg-card z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2">
                 <div class="font-semibold self-end">Time</div>
-                <div class="font-semibold self-end">Source</div>
                 <div class="font-semibold self-end">Cast</div>
+                <div class="font-semibold self-end text-center">Mitigated</div>
 
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
                     <FfxivIcon :icon-data="getJob(jobAbbr)" />
@@ -62,7 +62,7 @@ onMounted(() => {
 
 <style scoped>
 .timeline {
-    grid-template-columns: 50px 1fr 2fr repeat(v-bind(jobCount), auto);
+    grid-template-columns: 50px 1fr 100px repeat(v-bind(jobCount), auto);
 }
 
 .timeline>.grid-cols-subgrid {

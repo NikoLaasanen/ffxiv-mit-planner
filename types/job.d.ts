@@ -24,7 +24,12 @@ interface JobAbility {
     type: JobAbilityType,
     duration: number,
     cooldown: number,
-    icon?: string
+    icon?: string,
+    potency?: JobAbilityPotency
 }
 
 type JobAbilityType = 'mitigation' | 'interrupt' | 'buff' | 'debuff';
+
+interface JobAbilityPotency {
+    [K in DamageType]?: number;
+}
