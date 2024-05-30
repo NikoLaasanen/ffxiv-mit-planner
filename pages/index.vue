@@ -1,56 +1,90 @@
 <template>
-    <div class="flex flex-col gap-4">
-        <Card>
-            <CardHeader>
-                <CardDescription>
-                    {{ plan.timeline.title ?? 'Custom timeline' }}
-                </CardDescription>
-                <CardTitle>
-                    <PlanTitleEditor :title="planTitle" @update:title="newTitle => planTitle = newTitle" />
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
-                    @change:active-ability="activation => planStore.toggleActiveAbility(activation)" />
-            </CardContent>
-        </Card>
+    <div id="main-content" class="flex flex-col gap-4">
+        <template v-if="plan.timeline.events.length > 0">
+            <Card>
+                <CardHeader>
+                    <CardDescription>
+                        {{ plan.timeline.title ?? 'Custom timeline' }}
+                    </CardDescription>
+                    <CardTitle>
+                        <PlanTitleEditor :title="planTitle" @update:title="newTitle => planTitle = newTitle" />
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
+                        @change:active-ability="activation => planStore.toggleActiveAbility(activation)" />
+                </CardContent>
+            </Card>
 
-        <Card>
+            <div class="flex gap-2">
+                <Button type="button" class="grow" @click="savePlan" :disabled="!canSave || isSavingPlan">
+                    <template v-if="isSavingPlan">
+                        <LoadingIcon />
+                    </template>
+                    <template v-else>Save</template>
+                </Button>
+                <PlanClearButton @clear="planStore.clearPlan" :disabled="!canSave || isSavingPlan" />
+            </div>
+        </template>
+        <Card v-else>
             <CardHeader class="pb-0">
-                <CardTitle class="sr-only">New timeline</CardTitle>
+                <CardTitle class="sr-only">Welcome</CardTitle>
             </CardHeader>
             <CardContent>
-                <div class="flex gap-4">
-                    <TimelineLoader @change:timeline="loadTimeline" />
+                <div class="grid place-content-center gap-6 text-center">
+                    <h2 class="text-6xl">Welcome!</h2>
+                    <p>Let's start by creating a new timeline</p>
+                    <div>
+                        <TimelineLoader @change:timeline="loadTimeline" title="Load a template" />
+                    </div>
+                    <PlanLatest />
                 </div>
             </CardContent>
         </Card>
 
-        <div class="flex gap-2">
-            <Button type="button" class="grow" @click="savePlan" :disabled="!canSave || isSavingPlan">
-                <template v-if="isSavingPlan">
-                    <LoadingIcon />
-                </template>
-                <template v-else>Save</template>
-            </Button>
-            <PlanClearButton @clear="planStore.clearPlan" :disabled="!canSave || isSavingPlan" />
-        </div>
-
         <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <TimelineEditorEvent @new-event="addNewTimelineEvent" />
-            <TimelineEditorFflog @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
+            <Card>
+                <CardHeader>
+                    <CardTitle>Edit timeline</CardTitle>
+                    <CardDescription>Load a premade timeline or add a new single event.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-col gap-4">
+                        <Separator />
+                        <p>Load a new timeline</p>
+                        <TimelineLoader @change:timeline="loadTimeline" />
+                        <small>Loading a new timeline will replace the old plan</small>
+                        <Separator />
+                        <p>Add a new event</p>
+                        <TimelineEditorEvent @new-event="addNewTimelineEvent" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Import from FFlogs</CardTitle>
+                    <CardDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-col gap-4">
+                        <Separator />
+                        <TimelineEditorFflog
+                            @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { useAsyncState } from '@vueuse/core'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { usePlanStore } from '@/stores/plan'
 import { storeToRefs } from 'pinia'
-import { addDoc, collection, doc } from 'firebase/firestore'
+import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
 import { JobKey } from '~/injectionkeys'
 
 const { toast } = useToast()
@@ -73,7 +107,12 @@ provide(JobKey, jobs);
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
 
 const loadTimeline = (newTimeline: Timeline) => {
+    const hasPreviousTimeline = plan.value.timeline.events.length > 0;
     planStore.setTimeline(newTimeline);
+    if (!hasPreviousTimeline) {
+        console.log('maby scroll', document.getElementById('main-content'))
+        document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
 }
 
 const addNewTimelineEvent = (newEvent: TimelineEvent) => {
@@ -102,7 +141,8 @@ const {
                 // @ts-ignore: Create reference to document for db update
                 newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase().replace(' ', '_'))
                 return newData;
-            })
+            }),
+            createdAt: serverTimestamp()
         }).then((newPlan) => {
             toast({ description: 'Plan saved' });
             planStore.clearPlan();

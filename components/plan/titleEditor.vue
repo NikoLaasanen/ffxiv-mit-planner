@@ -23,7 +23,6 @@
 
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
-import { Button } from '@/components/ui/button'
 
 const emit = defineEmits<{
     (e: 'update:title', title: string): void

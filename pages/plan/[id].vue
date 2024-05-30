@@ -22,8 +22,6 @@
 
 <script lang="ts" setup>
 import { useAsyncState } from '@vueuse/core'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { collection, doc, updateDoc } from 'firebase/firestore'
 import { JobKey } from '~/injectionkeys'
@@ -65,7 +63,6 @@ const {
     isLoading: isUpdatingTitleAbilities
 } = useAsyncState(
     (newTitle: string) => {
-        console.log(newTitle)
         return updateDoc(planSource.value, {
             title: newTitle
         }).then(() => {

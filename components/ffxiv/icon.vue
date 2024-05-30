@@ -6,8 +6,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
 const props = defineProps({
     iconData: Object as PropType<Job | JobAbility>
 });

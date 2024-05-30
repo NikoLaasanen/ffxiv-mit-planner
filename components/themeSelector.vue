@@ -10,7 +10,6 @@
 
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
-import { Button } from '@/components/ui/button'
 
 const colorMode = useColorMode()
 

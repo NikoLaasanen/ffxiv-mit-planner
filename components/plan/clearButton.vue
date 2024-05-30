@@ -19,17 +19,6 @@
 
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 
 const emit = defineEmits(['clear']);
 

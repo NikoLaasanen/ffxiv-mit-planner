@@ -1,45 +1,24 @@
 <template>
-    <Card>
-        <CardHeader>
-            <CardTitle>Import from FFlogs</CardTitle>
-            <CardDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <Textarea class="mb-4" v-model="rawData"></textarea>
+    <Textarea class="mb-4" v-model="rawData"></textarea>
 
-            <Label for="merge-abilities">Merge abilities by</Label>
-            <Select id="merge-abilities" v-model="mergeBy">
-                <SelectTrigger>
-                    <SelectValue placeholder="Select merge method" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem value="time">Time</SelectItem>
-                        <SelectItem value="time-source">Time and source</SelectItem>
-                        <SelectItem value="none">Don't merge</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+    <Label for="merge-abilities">Merge abilities by</Label>
+    <Select id="merge-abilities" v-model="mergeBy">
+        <SelectTrigger>
+            <SelectValue placeholder="Select merge method" />
+        </SelectTrigger>
+        <SelectContent>
+            <SelectGroup>
+                <SelectItem value="time">Time</SelectItem>
+                <SelectItem value="time-source">Time and source</SelectItem>
+                <SelectItem value="none">Don't merge</SelectItem>
+            </SelectGroup>
+        </SelectContent>
+    </Select>
 
-            <Button class="mt-4" @click="doParse" :disabled="rawData.trim().length === 0">Import</Button>
-        </CardContent>
-    </Card>
+    <Button class="mt-4" @click="doParse" :disabled="rawData.trim().length === 0">Import</Button>
 </template>
 
 <script lang="ts" setup>
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-
 const emit = defineEmits<{
     (e: 'newTimeline', timelineEvents: TimelineEvent[]): void
 }>()

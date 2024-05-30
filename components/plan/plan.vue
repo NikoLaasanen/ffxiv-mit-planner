@@ -19,14 +19,15 @@
                 @change:activeAbility="item => $emit('change:activeAbility', item)" />
         </div>
     </ScrollArea>
-    <div class="mt-2 flex gap-2">
-        <Button v-for="job in jobs" :key="job.abbr" @click="toggleActiveJob(job.abbr)">{{ job.title }}</Button>
+    <div class="mt-2 flex flex-wrap gap-2">
+        <Button v-for="job in jobs" :key="job.abbr" :disabled="job.abilities?.length === 0"
+            @click="toggleActiveJob(job.abbr)">
+            <FfxivIcon :icon-data="job" />
+        </Button>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
 
 const emit = defineEmits<{

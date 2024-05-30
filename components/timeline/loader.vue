@@ -1,8 +1,8 @@
 <template>
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
-            <Button variant="outline" role="combobox" :aria-expanded="open" class="justify-between">
-                Load timeline
+            <Button role="combobox" :aria-expanded="open" class="justify-between">
+                {{ title }}
                 <Icon icon="radix-icons:caret-sort" class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -25,25 +25,19 @@
 
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
-import { Button } from '@/components/ui/button'
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
-} from '@/components/ui/command'
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover'
 import { collection, query, where } from 'firebase/firestore'
 
 const emit = defineEmits<{
     (e: 'change:timeline', timeline: Timeline): void
 }>()
+
+defineProps({
+    title: {
+        type: String,
+        required: false,
+        default: 'Select template'
+    }
+})
 
 const open = ref(false);
 const selection = ref('');
@@ -51,7 +45,7 @@ const selection = ref('');
 const db = useFirestore();
 const timelinesRef = collection(db, 'timeline');
 const timelinesQuery = query(timelinesRef, where('tpl', '==', true));
-const timelines = useCollection(timelinesQuery);
+const timelines = useCollection(timelinesQuery, { ssrKey: 'timelineLoader' });
 
 const groups = computed(() => {
     const grouped = timelines.value.reduce((result, obj) => {

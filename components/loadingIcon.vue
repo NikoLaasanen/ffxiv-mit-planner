@@ -17,5 +17,16 @@
                     values="0;2;0;0" />
             </circle>
         </svg>
+        <p v-if="showText" class="inline text-base">Loading...</p>
     </div>
 </template>
+
+<script setup>
+defineProps({
+    showText: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
+})
+</script>
