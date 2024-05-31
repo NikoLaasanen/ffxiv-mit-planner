@@ -65,10 +65,10 @@ const columnCount = computed(() => activeJobs.value.length ?? 0);
 
 const timelineEvents = computed(() => {
     return props.timeline?.events.filter(item =>
-    // Check preference for showing auto attacks
-    (showAutoAttacks.value || (!showAutoAttacks.value && item.ability.title !== 'attack') &&
+        // Check preference for showing auto attacks        
+        (showAutoAttacks.value || (!showAutoAttacks.value && item.ability.title !== 'attack')) &&
         ((item?.visible ?? true) || showHiddenRows.value)
-    ))
+    )
 })
 
 const toggleActiveJob = (jobAbbr: JobAbbrevation) => {
@@ -89,7 +89,7 @@ onMounted(() => {
 
 <style scoped>
 .scroll-area {
-    height: max(400px, 80vh);
+    height: max(400px, 65vh);
 }
 
 .timeline {

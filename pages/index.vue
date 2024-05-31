@@ -40,11 +40,13 @@
                         <p class="pb-2 text-white">Recently added</p>
                         <PlanLatest />
                     </div>
-                    <div v-if="latestPlans.length > 0">
+                    <div v-if="myCreations.length > 0">
                         <p class="pb-2 text-white">My latest</p>
-                        <Button v-for="latest in latestPlans" as-child>
-                            <NuxtLink :to="'/plan/' + latest.id">{{ latest.title }}</NuxtLink>
-                        </Button>
+                        <div class="flex gap-2">
+                            <Button v-for="latest in myCreations" as-child>
+                                <NuxtLink :to="'/plan/' + latest.id">{{ latest.title }}</NuxtLink>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </CardContent>
@@ -100,7 +102,7 @@ const { toast } = useToast()
 // Get plan store and set initial title
 const planStore = usePlanStore();
 const latestPlansStore = useLatestPlansStore();
-const { latest: latestPlans } = storeToRefs(latestPlansStore);
+const { latest: myCreations } = storeToRefs(latestPlansStore);
 const { plan } = storeToRefs(planStore)
 const planTitle = ref('My Awesome Plan');
 
@@ -155,7 +157,7 @@ const {
         }).then((newPlan) => {
             toast({ description: 'Plan saved' });
             planStore.clearPlan();
-            latestPlans.value.push({ title: planTitle.value, id: newPlan.id });
+            myCreations.value.push({ title: planTitle.value, id: newPlan.id });
             navigateTo('/plan/' + newPlan.id)
         }).catch(() => {
             toast({ description: 'Saving failed', variant: 'destructive' });
