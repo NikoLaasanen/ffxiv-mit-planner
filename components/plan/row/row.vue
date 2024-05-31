@@ -51,14 +51,17 @@ const totalMitigation = computed(() => {
             rowTime.value < item.time + item.ability.duration - activationBuffer.value)
     })
 
+    const addedAbilities = [] as string[];
     const dmgPercent = rowActive?.reduce((dmg, activeAbility) => {
         // Active ability has potency specified so add it
-        if (activeAbility.ability.potency &&
+        if (allowdMit(activeAbility.ability.title, addedAbilities) &&
+            activeAbility.ability.potency &&
             Object.keys(activeAbility.ability.potency).includes(damageType.value)
         ) {
             // @ts-ignore: Dynamic key causes ts error
             const p = activeAbility.ability.potency[damageType.value];
             if (p > 0) {
+                addedAbilities.push(activeAbility.ability.title);
                 return dmg * (1 - p / 100);
             }
         }
@@ -66,6 +69,19 @@ const totalMitigation = computed(() => {
     }, 100) ?? 0;
     return 100 - dmgPercent;
 });
+
+const allowdMit = (title: string, added: string[]) => {
+    const rangedAbilities = ['Troubadour', 'Tactician', 'Shield Samba'];
+    // Check if title is one of the checked rangedAbilities and if yes, 
+    // check if one of the was already added
+    if (added.includes(title)) {
+        return false;
+    }
+    else if (rangedAbilities.includes(title)) {
+        return rangedAbilities.filter(item => added.includes(item)).length === 0;
+    }
+    return true;
+}
 
 const getJob = (jobAbbr: JobAbbrevation) => jobs?.value.find(job => job.abbr === jobAbbr);
 
