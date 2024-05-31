@@ -1,5 +1,5 @@
 <template>
-    <ScrollArea v-if="timeline" class="h-[400px] rounded-md border p-4">
+    <ScrollArea v-if="timeline" class="scroll-area rounded-md border p-4">
         <div class="timeline p-2 grid">
             <div class="bg-card z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2">
                 <div class="font-semibold self-end">Time</div>
@@ -18,6 +18,7 @@
                 :active-abilities="activeAbilities"
                 @change:activeAbility="item => $emit('change:activeAbility', item)" />
         </div>
+        <ScrollBar orientation="horizontal" />
     </ScrollArea>
     <div class="mt-2 flex flex-wrap gap-2">
         <Button v-for="job in jobs" :key="job.abbr" :disabled="job.abilities?.length === 0"
@@ -61,6 +62,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.scroll-area {
+    height: max(400px, 80vh);
+}
+
 .timeline {
     grid-template-columns: 50px 1fr 100px repeat(v-bind(jobCount), auto);
 }
