@@ -12,7 +12,8 @@
             </CardHeader>
             <CardContent>
                 <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
-                    @change:active-ability="toggleAbility" />
+                    @change:active-ability="toggleAbility"
+                    @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)" />
             </CardContent>
         </Card>
 
@@ -37,6 +38,7 @@ const jobs = useCollection<Job>(jobRef);
 provide(JobKey, jobs);
 
 const planRef = collection(db, 'plan');
+const timelineRef = collection(db, 'timeline');
 const jobAbilityRef = collection(db, 'jobability');
 const planSource = computed(() =>
     doc(planRef, String(route.params.id))
@@ -58,9 +60,20 @@ const toggleAbility = (activation: ActiveAbility) => {
     }
 }
 
+const toggleEventVisiblity = (timelineEvent: TimelineEvent) => {
+    if (plan.value) {
+        plan.value.timeline.events = plan.value.timeline.events.map(item => {
+            if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+                return { ...item, visible: !(item.visible ?? true) }
+            }
+            return item;
+        });
+    }
+}
+
 const {
     execute: updateTitle,
-    isLoading: isUpdatingTitleAbilities
+    isLoading: isUpdatingTitle
 } = useAsyncState(
     (newTitle: string) => {
         return updateDoc(planSource.value, {
@@ -79,13 +92,23 @@ const {
     execute: updateActiveAbilities,
     isLoading: isUpdatingActiveAbilities
 } = useAsyncState(
-    () => {
+    async () => {
+        if (!plan.value) {
+            return Promise.reject(new Error('Saving prevented'))
+        }
+
+        // Fetch refs for abilities
         const updatedData = plan.value?.activeAbilities.map(obj => {
             let newData = { ...obj };
             // @ts-ignore: Create reference to document for db update
-            newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase())
+            newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase().replace(' ', '_'))
             return newData;
         })
+
+        // Update timeline
+        const timelineItemRef = doc(timelineRef, plan.value.timeline.id);
+        await updateDoc(timelineItemRef, { events: plan.value.timeline.events });
+
         return updateDoc(planSource.value, {
             activeAbilities: updatedData
         }).then(() => {

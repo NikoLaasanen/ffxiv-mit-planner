@@ -12,7 +12,8 @@
                 </CardHeader>
                 <CardContent>
                     <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
-                        @change:active-ability="activation => planStore.toggleActiveAbility(activation)" />
+                        @change:activeAbility="activation => planStore.toggleActiveAbility(activation)"
+                        @change:rowVisibility="timelineEvent => planStore.toggleEventVisiblity(timelineEvent)" />
                 </CardContent>
             </Card>
 
@@ -119,7 +120,6 @@ const loadTimeline = (newTimeline: Timeline) => {
     const hasPreviousTimeline = plan.value.timeline.events.length > 0;
     planStore.setTimeline(newTimeline);
     if (!hasPreviousTimeline) {
-        console.log('maby scroll', document.getElementById('main-content'))
         document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
 }

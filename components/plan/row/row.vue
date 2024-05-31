@@ -1,10 +1,22 @@
 <template>
-    <div v-if="timelineEvent" class="grid grid-cols-subgrid gap-x-3 hover:bg-muted">
-        <div>{{ timeInMinutes }}</div>
-        <div>{{ timelineEvent.ability.title }}</div>
+    <div v-if="timelineEvent" class="relative grid grid-cols-subgrid gap-x-3 items-center hover:bg-muted">
+        <div class="font-light text-center">{{ timeInMinutes }}</div>
+        <div class="group">
+            {{ timelineEvent.ability.title }}
+            <Button v-if="rowVisible" variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
+                class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
+                <Icon icon="radix-icons:eye-none" />
+            </Button>
+            <Button v-else variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
+                class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
+                <Icon icon="radix-icons:eye-open" />
+            </Button>
+        </div>
         <div class="text-center">
-            <span v-if="totalMitigation > 0">{{ totalMitigation.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                }}%</span>
+            <span v-if="totalMitigation > 0">
+                {{ totalMitigation.toLocaleString(undefined, { maximumFractionDigits: 2 }) }}<small
+                    class="text-muted-foreground">%</small>
+            </span>
         </div>
         <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1">
             <template v-for="ability in getJob(jobAbbr)?.abilities ?? []">
@@ -19,10 +31,16 @@
 </template>
 
 <script lang="ts" setup>
+import { Icon } from '@iconify/vue'
+import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
 
+const preferencesStore = usePreferencesStore();
+const { activationBuffer } = storeToRefs(preferencesStore);
+
 const emit = defineEmits<{
-    (e: 'change:activeAbility', activeAbility: ActiveAbility): void
+    (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
+    (e: 'change:rowVisibility'): void,
 }>()
 
 const props = defineProps({
@@ -31,6 +49,7 @@ const props = defineProps({
 });
 
 const rowTime = computed(() => props.timelineEvent?.time ?? 0)
+const rowVisible = computed(() => props.timelineEvent?.visible ?? true)
 
 const jobs = inject(JobKey, null)
 const activeJobs = inject(ActiveJobsKey, null)
@@ -42,8 +61,6 @@ const timeInMinutes = computed(() => {
 });
 
 const damageType = computed(() => props.timelineEvent?.ability.damageType ?? 'magical');
-
-const activationBuffer = ref(1);
 
 const totalMitigation = computed(() => {
     const rowActive = props.activeAbilities?.filter(item => {

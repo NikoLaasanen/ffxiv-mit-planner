@@ -11,7 +11,8 @@ type ContentType = 'unknown' | 'expert' | 'savage' | 'ultimate';
 interface TimelineEvent {
     time: number,
     source: string,
-    ability: BossAbility
+    ability: BossAbility,
+    visible: boolean
 }
 
 interface BossAbility {

@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 
-export const useLatestPlansStore = defineStore('latest-plans', {
+export const usePreferencesStore = defineStore('preferences', {
     state: () => ({
-        latest: ref([] as { title: string, id: string }[])
+        showAutoAttacks: ref(true),
+        activationBuffer: ref(0)
     }),
     persist: {
         storage: persistedState.localStorage

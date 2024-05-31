@@ -2,8 +2,11 @@
     <ScrollArea v-if="timeline" class="scroll-area rounded-md border p-4">
         <div class="timeline p-2 grid">
             <div class="bg-card z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2">
-                <div class="font-semibold self-end">Time</div>
-                <div class="font-semibold self-end">Cast</div>
+                <div class="flex justify-center font-semibold self-end">
+                    <Icon icon="radix-icons:clock" class="mb-1" />
+                </div>
+                <div class=" font-semibold self-end">Cast
+                </div>
                 <div class="font-semibold self-end text-center">Mitigated</div>
 
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
@@ -14,9 +17,10 @@
                     </div>
                 </div>
             </div>
-            <PlanRow v-for="timelineEvent in timeline.events" :key="timelineEvent.time" :timeline-event="timelineEvent"
-                :active-abilities="activeAbilities"
-                @change:activeAbility="item => $emit('change:activeAbility', item)" />
+            <PlanRow v-for="timelineEvent in timelineEvents" :key="timelineEvent.time" :timeline-event="timelineEvent"
+                :active-abilities="activeAbilities" :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
+                @change:activeAbility="item => $.emit('change:activeAbility', item)"
+                @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)" />
         </div>
         <ScrollBar orientation="horizontal" />
     </ScrollArea>
@@ -26,13 +30,23 @@
             <FfxivIcon :icon-data="job" />
         </Button>
     </div>
+    <div class="mt-4">
+        <div class="flex flex-wrap gap-2">
+            <Checkbox id="plan-show-hidden-items" :checked="showHiddenRows" @click="showHiddenRows = !showHiddenRows" />
+            <Label for="plan-show-hidden-items" class="self-center font-normal">Show hidden items</Label>
+        </div>
+        <p class="text-muted-foreground">You can toggle item visiblity by right clicking cast title</p>
+    </div>
 </template>
 
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
+import { Icon } from '@iconify/vue'
 
 const emit = defineEmits<{
-    (e: 'change:activeAbility', activeAbility: ActiveAbility): void
+    (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
+    (e: 'change:rowVisibility', timelineEvent: TimelineEvent): void,
 }>()
 
 const props = defineProps({
@@ -40,10 +54,22 @@ const props = defineProps({
     activeAbilities: Array as PropType<ActiveAbility[]>,
 })
 
+const preferencesStore = usePreferencesStore();
+const { showAutoAttacks } = storeToRefs(preferencesStore);
+const showHiddenRows = ref(false);
+
 const jobs = inject(JobKey, null)
 const activeJobs = ref([] as JobAbbrevation[]);
 provide(ActiveJobsKey, activeJobs);
-const jobCount = computed(() => activeJobs.value.length ?? 0);
+const columnCount = computed(() => activeJobs.value.length ?? 0);
+
+const timelineEvents = computed(() => {
+    return props.timeline?.events.filter(item =>
+    // Check preference for showing auto attacks
+    (showAutoAttacks.value || (!showAutoAttacks.value && item.ability.title !== 'attack') &&
+        ((item?.visible ?? true) || showHiddenRows.value)
+    ))
+})
 
 const toggleActiveJob = (jobAbbr: JobAbbrevation) => {
     if (activeJobs.value.includes(jobAbbr)) {
@@ -67,10 +93,10 @@ onMounted(() => {
 }
 
 .timeline {
-    grid-template-columns: 50px 1fr 100px repeat(v-bind(jobCount), auto);
+    grid-template-columns: 50px 1fr 100px repeat(max(v-bind(columnCount), 1), auto);
 }
 
 .timeline>.grid-cols-subgrid {
-    grid-column: span v-bind(jobCount + 3);
+    grid-column: span v-bind(columnCount + 3);
 }
 </style>

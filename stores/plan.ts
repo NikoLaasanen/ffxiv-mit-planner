@@ -63,6 +63,14 @@ export const usePlanStore = defineStore('plan', {
             } else {
                 this.plan.activeAbilities = this.plan.activeAbilities.filter(item => JSON.stringify(item) !== JSON.stringify(activation))
             }
+        },
+        toggleEventVisiblity(timelineEvent: TimelineEvent) {
+            this.plan.timeline.events = this.plan.timeline.events.map(item => {
+                if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+                    return { ...item, visible: !(item.visible ?? true) }
+                }
+                return item;
+            });
         }
     }
 })
