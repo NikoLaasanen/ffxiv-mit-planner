@@ -166,6 +166,10 @@ const {
     null,
     { immediate: false }
 )
+
+useSeoMeta({
+    title: 'FFXIV mitigation planner'
+})
 </script>
 
 <style scoped>

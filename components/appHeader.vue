@@ -5,6 +5,9 @@
                 <NuxtLink to="/">FFXIV mitigation planner</NuxtLink>
             </div>
             <div class="flex gap-2">
+                <Button variant="ghost" as-child>
+                    <NuxtLink :to="'/jobs'">Jobs</NuxtLink>
+                </Button>
                 <Preferences />
                 <ThemeSelector />
                 <!-- 

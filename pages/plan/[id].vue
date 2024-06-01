@@ -143,4 +143,8 @@ onMounted(() => {
         isAllDoneFetching.value = true
     })
 })
+
+useSeoMeta({
+    title: () => `${plan.value?.title ?? ''} - FFXIV mitigation planner`
+})
 </script>
