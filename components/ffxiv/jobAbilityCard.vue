@@ -11,15 +11,31 @@
                 <span>Duration:</span><span class="text-right">{{ ability.duration }}s</span>
                 <span>Cooldown:</span><span class="text-right">{{ ability.cooldown }}s</span>
                 <span>Type:</span><span class="text-right">{{ ability.type }}</span>
+                <span><Label :for="'jobability-' + abilityId" class="font-normal">Hide:</Label></span><span
+                    class="text-right">
+                    <Checkbox :id="'jobability-' + abilityId" :checked="preferencesStore.isAbilityInHiddens(ability)"
+                        @click="preferencesStore.toggleJobAbilityVisibility(ability)" />
+                </span>
             </div>
         </CardContent>
     </Card>
 </template>
 
 <script lang="ts" setup>
-defineProps({
-    ability: Object as PropType<JobAbility>
+const emit = defineEmits(['change:visibility']);
+
+const preferencesStore = usePreferencesStore();
+
+const props = defineProps({
+    ability: Object as PropType<JobAbility>,
+    editVisibility: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 })
+
+const abilityId = computed(() => props.ability?.title.replace(' ', '_'));
 
 useSeoMeta({
     title: 'Jobs & abilities - FFXIV mitigation planner'
