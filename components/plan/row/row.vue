@@ -3,14 +3,23 @@
         <div class="font-light text-center">{{ timeInMinutes }}</div>
         <div class="group">
             {{ timelineEvent.ability.title }}
-            <Button v-if="rowVisible" variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
-                class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
-                <Icon icon="radix-icons:eye-none" />
-            </Button>
-            <Button v-else variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
-                class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
-                <Icon icon="radix-icons:eye-open" />
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <Button v-if="rowVisible" variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
+                            class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
+                            <Icon icon="radix-icons:eye-none" />
+                        </Button>
+                        <Button v-else variant="ghost" size="icon" @click="$.emit('change:rowVisibility')"
+                            class="h-[1.4rem] w-[1.4rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex">
+                            <Icon icon="radix-icons:eye-open" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Toggle visibility</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </div>
         <div class="text-center">
             <span v-if="totalMitigation > 0">

@@ -14,7 +14,7 @@
     <span v-else>
         <div class="flex items-center justify-between">
             <span>{{ title }}</span>
-            <Button @click="editTitle = true">
+            <Button @click="editTitle = true" class="flex gap-2">
                 <Icon icon="radix-icons:pencil-1" class="h-[1.2rem] w-[1.2rem]" /> Edit title
             </Button>
         </div>
