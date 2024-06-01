@@ -11,13 +11,14 @@
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
+                <Plan v-if="isAllDoneFetching" :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                     @change:active-ability="toggleAbility"
                     @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)" />
+                <PlanSkeleton v-else />
             </CardContent>
         </Card>
 
-        <Button @click="updateActiveAbilities">Save</Button>
+        <Button @click="updateActiveAbilities" :disabled="!isAllDoneFetching">Save</Button>
     </div>
     <div v-else>
         <Alert variant="destructive">
@@ -39,6 +40,7 @@ import { Icon } from '@iconify/vue'
 import { useAsyncState } from '@vueuse/core'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { collection, doc, updateDoc } from 'firebase/firestore'
+import { usePendingPromises } from 'vuefire'
 import { JobKey } from '~/injectionkeys'
 import { isAbilityActivated } from '@/lib/utils'
 
@@ -134,4 +136,11 @@ const {
     null,
     { immediate: false }
 )
+
+const isAllDoneFetching = ref(false);
+onMounted(() => {
+    usePendingPromises().then(() => {
+        isAllDoneFetching.value = true
+    })
+})
 </script>
