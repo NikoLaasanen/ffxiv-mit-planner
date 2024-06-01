@@ -19,9 +19,23 @@
 
         <Button @click="updateActiveAbilities">Save</Button>
     </div>
+    <div v-else>
+        <Alert variant="destructive">
+            <AlertTitle class="flex items-center gap-2">
+                <Icon icon="radix-icons:exclamation-triangle" /> Not found!
+            </AlertTitle>
+            <AlertDescription>
+                <p class="mb-2">This plan does not exist anymore.</p>
+                <Button as-child>
+                    <NuxtLink :to="'/'">Back to frontpage</NuxtLink>
+                </Button>
+            </AlertDescription>
+        </Alert>
+    </div>
 </template>
 
 <script lang="ts" setup>
+import { Icon } from '@iconify/vue'
 import { useAsyncState } from '@vueuse/core'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { collection, doc, updateDoc } from 'firebase/firestore'
