@@ -27,7 +27,7 @@
     </ScrollArea>
     <div class="mt-2 flex flex-wrap gap-2">
         <Button v-for="job in jobs" :key="job.abbr" :disabled="job.abilities?.length === 0"
-            @click="toggleActiveJob(job.abbr)">
+            :variant="activeJobs.includes(job.abbr) ? 'default' : 'outline'" @click="toggleActiveJob(job.abbr)">
             <FfxivIcon :icon-data="job" />
         </Button>
     </div>
