@@ -28,7 +28,7 @@ interface JobAbility {
     potency?: JobAbilityPotency
 }
 
-type JobAbilityType = 'mitigation' | 'interrupt' | 'buff' | 'debuff';
+type JobAbilityType = 'mitigation' | 'utility' | 'interrupt' | 'buff' | 'debuff';
 
 interface JobAbilityPotency {
     [K in DamageType]?: number;

@@ -29,7 +29,8 @@
         </div>
         <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1">
             <template v-for="ability in getJob(jobAbbr)?.abilities ?? []">
-                <span class="w-6 h-6 flex items-center justify-center">
+                <span v-if="preferencesStore.isAbilityVisible(ability)"
+                    class="w-6 h-6 flex items-center justify-center">
                     <PlanRowActiveAbility :ability="ability" :owner="jobAbbr" :time="rowTime"
                         :activeAbilities="activeAbilities" :activation-buffer="activationBuffer"
                         @change:ability="toggleAbility(jobAbbr, ability)" />

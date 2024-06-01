@@ -7,7 +7,19 @@
             <div class="flex gap-2">
                 <Preferences />
                 <ThemeSelector />
+                <!-- 
+                    <Button variant="ghost" as-child>
+                        <NuxtLink :to="'https://github.com/NikoLaasanen/ffxiv-mit-planner'" target="_blank">
+                            <Icon icon="radix-icons:github-logo" class="h-[1.2rem] w-[1.2rem]" />
+                            <span class="sr-only">Github</span>
+                        </NuxtLink>
+                    </Button>
+                -->
             </div>
         </div>
     </header>
 </template>
+
+<script lang="ts" setup>
+import { Icon } from '@iconify/vue'
+</script>

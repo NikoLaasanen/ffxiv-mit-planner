@@ -1,6 +1,6 @@
 <template>
-    <ScrollArea v-if="timeline" class="scroll-area rounded-md border p-4">
-        <div class="timeline p-2 grid">
+    <ScrollArea v-if="timeline" class="scroll-area rounded-md border p-4 pt-2">
+        <div class="timeline p-2 pt-0 grid">
             <div class="bg-card z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2">
                 <div class="flex justify-center font-semibold self-end">
                     <Icon icon="radix-icons:clock" class="mb-1" />
@@ -12,8 +12,9 @@
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
                     <FfxivIcon :icon-data="getJob(jobAbbr)" />
                     <div class="flex gap-1">
-                        <FfxivIcon v-for="ability in getJob(jobAbbr)?.abilities" :for="ability.title"
-                            :icon-data="ability" />
+                        <template v-for="ability in getJob(jobAbbr)?.abilities" :for="ability.title">
+                            <FfxivIcon v-if="preferencesStore.isAbilityVisible(ability)" :icon-data="ability" />
+                        </template>
                     </div>
                 </div>
             </div>

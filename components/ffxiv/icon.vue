@@ -1,9 +1,9 @@
 <template>
-    <TooltipProvider>
+    <TooltipProvider :delay-duration="0">
         <Tooltip>
             <TooltipTrigger as-child>
-                <Avatar v.if="iconData" class="w-6 h-6 img-contain rounded-lg">
-                    <AvatarImage :src="imageSrc" alt="@radix-vue" />
+                <Avatar v-if="iconData" class="w-6 h-6 img-contain rounded-lg">
+                    <AvatarImage :src="imageSrc" :alt="iconTitle" />
                     <AvatarFallback>{{ iconTitle }}</AvatarFallback>
                 </Avatar>
             </TooltipTrigger>

@@ -27,6 +27,25 @@
                             <span class="grid place-content-center">s</span>
                         </span>
                     </div>
+                    <div class="col-span-3 flex flex-col gap-2">
+                        <Separator />
+                        <p class="text-xs font-medium text-muted-foreground">Show ability type on timeline:</p>
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Mitigation</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showAbilityTypeMitigation"
+                            @click="showAbilityTypeMitigation = !showAbilityTypeMitigation" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Utility</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showAbilityTypeUtility"
+                            @click="showAbilityTypeUtility = !showAbilityTypeUtility" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Buffs</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showAbilityTypeBuff"
+                            @click="showAbilityTypeBuff = !showAbilityTypeBuff" />
+                    </div>
                 </div>
             </div>
         </PopoverContent>
@@ -38,5 +57,11 @@ import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 
 const preferencesStore = usePreferencesStore();
-const { showAutoAttacks, activationBuffer } = storeToRefs(preferencesStore);
+const {
+    showAutoAttacks,
+    activationBuffer,
+    showAbilityTypeMitigation,
+    showAbilityTypeUtility,
+    showAbilityTypeBuff
+} = storeToRefs(preferencesStore);
 </script>
