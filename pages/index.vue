@@ -42,7 +42,7 @@
                     </div>
                     <div v-if="myCreations.length > 0">
                         <p class="pb-2 text-white">My latest</p>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap place-content-center gap-2">
                             <Button v-for="latest in myCreations" as-child>
                                 <NuxtLink :to="'/plan/' + latest.id">{{ latest.title }}</NuxtLink>
                             </Button>

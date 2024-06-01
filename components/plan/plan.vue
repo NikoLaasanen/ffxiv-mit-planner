@@ -35,7 +35,6 @@
             <Checkbox id="plan-show-hidden-items" :checked="showHiddenRows" @click="showHiddenRows = !showHiddenRows" />
             <Label for="plan-show-hidden-items" class="self-center font-normal">Show hidden items</Label>
         </div>
-        <p class="text-muted-foreground">You can toggle item visiblity by right clicking cast title</p>
     </div>
 </template>
 
