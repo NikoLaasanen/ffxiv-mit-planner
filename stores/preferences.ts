@@ -6,6 +6,7 @@ export const usePreferencesStore = defineStore('preferences', {
         activationBuffer: ref(0),
         showAbilityTypeMitigation: ref(true),
         showAbilityTypeUtility: ref(true),
+        showAbilityTypeInterrupt: ref(false),
         showAbilityTypeBuff: ref(false),
         jobAbilityHidden: ref([] as string[])
     }),
@@ -17,6 +18,7 @@ export const usePreferencesStore = defineStore('preferences', {
             return (ability: JobAbility) =>
                 ((ability.type === 'mitigation' && state.showAbilityTypeMitigation) ||
                     (ability.type === 'utility' && state.showAbilityTypeUtility) ||
+                    (ability.type === 'interrupt' && state.showAbilityTypeInterrupt) ||
                     (ability.type === 'buff' && state.showAbilityTypeBuff)) &&
                 !state.jobAbilityHidden.includes(ability.title)
         },

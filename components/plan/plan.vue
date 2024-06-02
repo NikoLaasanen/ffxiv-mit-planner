@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <PlanRow v-for="timelineEvent in timelineEvents" :key="timelineEvent.time" :timeline-event="timelineEvent"
+            <PlanRow v-for="(timelineEvent, key) in timelineEvents" :key="key" :timeline-event="timelineEvent"
                 :active-abilities="activeAbilities" :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
                 @change:activeAbility="item => $.emit('change:activeAbility', item)"
                 @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)" />

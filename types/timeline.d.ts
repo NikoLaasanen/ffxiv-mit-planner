@@ -17,6 +17,7 @@ interface TimelineEvent {
 
 interface BossAbility {
     title: string,
+    interruptable: boolean,
     damageType: DamageType
 }
 

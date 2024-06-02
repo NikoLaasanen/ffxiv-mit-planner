@@ -12,3 +12,11 @@ export function isAbilityActivated(targetAbility: ActiveAbility, activeAbilities
       item.ability.title === targetAbility.ability.title
   );
 }
+
+export function isAbilityInterrupted(timelineEvent: TimelineEvent, activeAbilities: ActiveAbility[]) {
+  if (!(timelineEvent.ability?.interruptable ?? false)) return false;
+
+  return activeAbilities.some(item =>
+    item.time === timelineEvent.time && item.ability.type === 'interrupt'
+  );
+}

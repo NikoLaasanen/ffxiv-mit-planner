@@ -40,10 +40,10 @@
                         <p class="pb-2 text-white">Recently added</p>
                         <PlanLatest />
                     </div>
-                    <div v-if="myCreations.length > 0">
+                    <div v-if="shownLatest.length > 0">
                         <p class="pb-2 text-white">My latest</p>
                         <div class="flex flex-wrap place-content-center gap-2">
-                            <Button v-for="latest in myCreations" as-child>
+                            <Button v-for="latest in shownLatest" as-child>
                                 <NuxtLink :to="'/plan/' + latest.id">{{ latest.title }}</NuxtLink>
                             </Button>
                         </div>
@@ -116,6 +116,7 @@ const jobAbilityRef = collection(db, 'jobability');
 const jobs = useCollection<Job>(jobRef);
 provide(JobKey, jobs);
 
+const shownLatest = computed(() => myCreations.value.slice(-5).reverse());
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
 
 const loadTimeline = (newTimeline: Timeline) => {

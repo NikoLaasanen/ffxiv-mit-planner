@@ -27,17 +27,8 @@ const emit = defineEmits(['change:visibility']);
 const preferencesStore = usePreferencesStore();
 
 const props = defineProps({
-    ability: Object as PropType<JobAbility>,
-    editVisibility: {
-        type: Boolean,
-        required: false,
-        default: false
-    }
+    ability: Object as PropType<JobAbility>
 })
 
 const abilityId = computed(() => props.ability?.title.replace(' ', '_'));
-
-useSeoMeta({
-    title: 'Jobs & abilities - FFXIV mitigation planner'
-})
 </script>

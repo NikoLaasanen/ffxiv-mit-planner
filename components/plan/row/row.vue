@@ -3,6 +3,12 @@
         <div class="font-light text-center">{{ timeInMinutes }}</div>
         <div class="group">
             {{ timelineEvent.ability.title }}
+            <template v-if="timelineEvent.ability?.interruptable">
+                <Badge v-if="!activeAbilities || !isAbilityInterrupted(timelineEvent, activeAbilities)"
+                    variant="destructive">
+                    <Icon icon="radix-icons:exclamation-triangle" class="mr-2" /> Interrupt missing!
+                </Badge>
+            </template>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger>
@@ -41,6 +47,7 @@
 </template>
 
 <script lang="ts" setup>
+import { isAbilityInterrupted } from '@/lib/utils'
 import { Icon } from '@iconify/vue'
 import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
@@ -81,7 +88,7 @@ const totalMitigation = computed(() => {
     const addedAbilities = [] as string[];
     const dmgPercent = rowActive?.reduce((dmg, activeAbility) => {
         // Active ability has potency specified so add it
-        if (allowdMit(activeAbility.ability.title, addedAbilities) &&
+        if (allowMit(activeAbility.ability.title, addedAbilities) &&
             activeAbility.ability.potency &&
             Object.keys(activeAbility.ability.potency).includes(damageType.value)
         ) {
@@ -97,7 +104,7 @@ const totalMitigation = computed(() => {
     return 100 - dmgPercent;
 });
 
-const allowdMit = (title: string, added: string[]) => {
+const allowMit = (title: string, added: string[]) => {
     const rangedAbilities = ['Troubadour', 'Tactician', 'Shield Samba'];
     // Check if title is one of the checked rangedAbilities and if yes, 
     // check if one of the was already added

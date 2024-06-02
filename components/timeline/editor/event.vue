@@ -19,6 +19,16 @@
                 </SelectGroup>
             </SelectContent>
         </Select>
+        <div class="my-2 items-top flex gap-x-2">
+            <Checkbox type="text" id="new-event-interruptable" :checked="interruptable"
+                @click="interruptable = !interruptable" />
+            <div class="grid gap-1.5 leading-none">
+                <label for="new-event-interruptable"
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Can be interrupted
+                </label>
+            </div>
+        </div>
         <Button type="submit" class="mt-4" :disabled="!canSubmit">Add</Button>
     </form>
 </template>
@@ -31,7 +41,8 @@ const emit = defineEmits<{
 const time = ref(0);
 const title = ref("");
 const source = ref("");
-const damageType = ref("none" as DamageType);
+const interruptable = ref(false);
+const damageType = ref("magical" as DamageType);
 
 const canSubmit = computed(() => title.value.length > 0 && source.value.length > 0)
 
@@ -41,12 +52,14 @@ const onSubmit = () => {
         source: source.value,
         ability: {
             title: title.value,
+            interruptable: interruptable.value,
             damageType: damageType.value
         } as BossAbility
     } as TimelineEvent);
 
     time.value = 0;
     title.value = "";
+    interruptable.value = false;
     damageType.value = "magical" as DamageType;
 }
 </script>

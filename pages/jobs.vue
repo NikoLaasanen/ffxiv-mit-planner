@@ -28,7 +28,7 @@
                 <div class="grid grid-cols-subgrid col-span-1">
                     <ul class="grid gap-2">
                         <li v-for="ability in job.abilities" :key="ability.title" class="flex items-center gap-2">
-                            <FfxivJobAbilityCard :ability="ability" :edit-visibility="true"
+                            <FfxivJobAbilityCard :ability="ability"
                                 @change:visibility="preferencesStore.toggleJobAbilityVisibility(ability)" />
                         </li>
                     </ul>
@@ -49,13 +49,13 @@ const jobRef = collection(db, 'job');
 const { data: jobs, pending: loadingJobs } = useCollection<Job>(jobRef);
 
 const abilityTypes = computed(() => jobs.value.reduce((types, job) => {
-    job.abilities.forEach(ability => {
+    job.abilities.forEach((ability: JobAbility) => {
         if (!types.includes(ability.type)) {
             types.push(ability.type)
         }
     });
     return types;
-}, []));
+}, ([] as JobAbilityType[])));
 
 const setAbilityVisibilityByType = (abilityType: JobAbilityType, show: boolean) => {
     const added = [];
@@ -67,6 +67,10 @@ const setAbilityVisibilityByType = (abilityType: JobAbilityType, show: boolean) 
         })
     });
 }
+
+useSeoMeta({
+    title: 'Jobs & abilities - FFXIV mitigation planner'
+})
 </script>
 
 <style scoped>

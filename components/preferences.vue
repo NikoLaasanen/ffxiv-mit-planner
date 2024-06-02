@@ -42,6 +42,11 @@
                             @click="showAbilityTypeUtility = !showAbilityTypeUtility" />
                     </div>
                     <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Interrupt</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showAbilityTypeInterrupt"
+                            @click="showAbilityTypeInterrupt = !showAbilityTypeInterrupt" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
                         <Label for="preferences-show-autos" class="self-center font-normal">Buffs</Label>
                         <Checkbox id="preferences-show-autos" :checked="showAbilityTypeBuff"
                             @click="showAbilityTypeBuff = !showAbilityTypeBuff" />
@@ -62,6 +67,7 @@ const {
     activationBuffer,
     showAbilityTypeMitigation,
     showAbilityTypeUtility,
+    showAbilityTypeInterrupt,
     showAbilityTypeBuff
 } = storeToRefs(preferencesStore);
 </script>

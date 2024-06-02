@@ -7,8 +7,8 @@
                     <AvatarFallback>{{ iconTitle }}</AvatarFallback>
                 </Avatar>
             </TooltipTrigger>
-            <TooltipContent v-if="abilityDuration > 0" class="p-0">
-                <FfxivJobAbilityCard v-if="abilityDuration > 0" :ability="(iconData as JobAbility)" />
+            <TooltipContent v-if="abilityCooldown > 0" class="p-0">
+                <FfxivJobAbilityCard v-if="abilityCooldown > 0" :ability="(iconData as JobAbility)" />
             </TooltipContent>
             <TooltipContent v-else>
                 {{ iconTitle }}
@@ -25,5 +25,5 @@ const props = defineProps({
 const imageSrc = computed(() => props.iconData?.icon ?? "");
 const iconTitle = computed(() => props.iconData?.title ?? "");
 
-const abilityDuration = computed(() => (props.iconData as JobAbility)?.duration ?? 0);
+const abilityCooldown = computed(() => (props.iconData as JobAbility)?.cooldown ?? 0);
 </script>
