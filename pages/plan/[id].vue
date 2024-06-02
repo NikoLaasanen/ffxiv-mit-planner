@@ -70,7 +70,7 @@ const planSource = computed(() =>
 const { data: plan, pending } = useDocument<Plan>(planSource);
 
 const toggleAbility = (activation: ActiveAbility) => {
-    if (plan.value && plan.value.activeAbilities.length > 0) {
+    if (plan.value) {
         if (!isAbilityActivated(activation, plan.value?.activeAbilities)) {
             plan.value.activeAbilities.push(activation);
         } else {

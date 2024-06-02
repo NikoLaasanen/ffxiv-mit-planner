@@ -20,8 +20,7 @@
             </SelectContent>
         </Select>
         <div class="my-2 items-top flex gap-x-2">
-            <Checkbox type="text" id="new-event-interruptable" :checked="interruptable"
-                @click="interruptable = !interruptable" />
+            <Checkbox id="new-event-interruptable" :checked="interruptable" @click="interruptable = !interruptable" />
             <div class="grid gap-1.5 leading-none">
                 <label for="new-event-interruptable"
                     class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
