@@ -7,7 +7,14 @@
                         {{ plan.timeline.title ?? 'Custom timeline' }}
                     </CardDescription>
                     <CardTitle>
-                        <PlanTitleEditor :title="planTitle" @update:title="newTitle => planTitle = newTitle" />
+                        <div class="flex gap-2">
+                            <PlanTitleEditor :title="planTitle" @update:title="newTitle => planTitle = newTitle"
+                                class="grow" />
+                            <Button variant="ghost" @click="planStore.clearPlan()">
+                                <Icon icon="radix-icons:reset" class="h-[1.2rem] w-[1.2rem]" /> <span
+                                    class="sr-only">Back to start</span>
+                            </Button>
+                        </div>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -91,6 +98,7 @@
 
 <script lang="ts" setup>
 import { useAsyncState } from '@vueuse/core'
+import { Icon } from '@iconify/vue'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { usePlanStore } from '@/stores/plan'
 import { storeToRefs } from 'pinia'
@@ -101,8 +109,8 @@ const { toast } = useToast()
 
 // Get plan store and set initial title
 const planStore = usePlanStore();
-const latestPlansStore = useLatestPlansStore();
-const { latest: myCreations } = storeToRefs(latestPlansStore);
+const myPlansStore = useMyPlansStore();
+const { latest: myLatest } = storeToRefs(myPlansStore);
 const { plan } = storeToRefs(planStore)
 const planTitle = ref('My Awesome Plan');
 
@@ -116,7 +124,7 @@ const jobAbilityRef = collection(db, 'jobability');
 const jobs = useCollection<Job>(jobRef);
 provide(JobKey, jobs);
 
-const shownLatest = computed(() => myCreations.value.slice(-5).reverse());
+const shownLatest = computed(() => myLatest.value.slice(-5).reverse());
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
 
 const loadTimeline = (newTimeline: Timeline) => {
@@ -158,7 +166,7 @@ const {
         }).then((newPlan) => {
             toast({ description: 'Plan saved' });
             planStore.clearPlan();
-            myCreations.value.push({ title: planTitle.value, id: newPlan.id });
+            myLatest.value.push({ title: planTitle.value, id: newPlan.id });
             navigateTo('/plan/' + newPlan.id)
         }).catch(() => {
             toast({ description: 'Saving failed', variant: 'destructive' });

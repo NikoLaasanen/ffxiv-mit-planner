@@ -1,5 +1,5 @@
 <template>
-    <div v-if="timelineEvent" class="relative grid grid-cols-subgrid gap-x-3 items-center hover:bg-muted">
+    <div v-if="timelineEvent" class="relative grid grid-cols-subgrid gap-x-3 items-center rounded hover:bg-card">
         <div class="font-light text-center">{{ timeInMinutes }}</div>
         <div class="group">
             {{ timelineEvent.ability.title }}

@@ -13,8 +13,7 @@ export const usePlanStore = defineStore('plan', {
             } as Timeline,
             activeAbilities: [] as ActiveAbility[],
             jobs: [] as JobAbbrevation[]
-        } as Plan),
-        activationBuffer: ref(2)
+        } as Plan)
     }),
     getters: {
         isAbilityActivated: (state) => {

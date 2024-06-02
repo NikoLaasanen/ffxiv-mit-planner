@@ -1,7 +1,7 @@
 <template>
     <h1 class="text-lg">Jobs & abilities</h1>
     <Separator />
-    <p class="mb-4">Currently supported jobs and abilities are listed below.</p>
+    <p class="my-4">Currently supported jobs and abilities are listed below.</p>
 
     <div class="flex flex-col gap-2">
         <p>You can manage ability visibility per ability basis by clicking the hide checkbox in the ability card.</p>

@@ -7,7 +7,13 @@
                     {{ plan.timeline.title }}
                 </CardDescription>
                 <CardTitle>
-                    <PlanTitleEditor :title="plan.title" @update:title="newTitle => updateTitle(undefined, newTitle)" />
+
+                    <div class="flex gap-2">
+                        <PlanTitleEditor :title="plan.title"
+                            @update:title="newTitle => updateTitle(undefined, newTitle)" class="grow" />
+
+                        <PlanFavorite :plan-id="plan.id" :plan-title="plan.title" />
+                    </div>
                 </CardTitle>
             </CardHeader>
             <CardContent>
