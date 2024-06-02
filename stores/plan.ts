@@ -73,7 +73,7 @@ export const usePlanStore = defineStore('plan', {
         },
         setEventDamageType(timelineEvent: TimelineEvent, damageType: DamageType) {
             this.plan.timeline.events = this.plan.timeline.events.map(item => {
-                if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+                if (item.ability.title === timelineEvent.ability.title) {
                     item.ability.damageType = damageType;
                     return item
                 }

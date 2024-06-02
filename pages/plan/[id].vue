@@ -97,7 +97,7 @@ const toggleEventVisiblity = (timelineEvent: TimelineEvent) => {
 const setEventDamageType = (timelineEvent: TimelineEvent, damageType: DamageType) => {
     if (plan.value) {
         plan.value.timeline.events = plan.value.timeline.events.map(item => {
-            if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+            if (item.ability.title === timelineEvent.ability.title) {
                 item.ability.damageType = damageType;
                 return item
             }

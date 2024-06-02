@@ -1,7 +1,8 @@
 {
-  "name": "nuxt-app",
+  "name": "ffxiv-mit-planner",
   "private": true,
   "type": "module",
+  "author": "Niko Laasanen <niko.laasanen@gmail.com>",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
