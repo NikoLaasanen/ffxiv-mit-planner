@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const usePreferencesStore = defineStore('preferences', {
     state: () => ({
-        showAutoAttacks: ref(true),
+        showAutoAttacks: ref(false),
         activationBuffer: ref(0),
         showAbilityTypeMitigation: ref(true),
         showAbilityTypeUtility: ref(true),
