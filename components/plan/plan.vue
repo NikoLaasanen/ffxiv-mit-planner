@@ -1,7 +1,7 @@
 <template>
     <ScrollArea v-if="timeline" class="scroll-area rounded-md border bg-muted p-4 pt-2">
         <div class="timeline p-2 pt-0 grid">
-            <div class="bg-muted z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2">
+            <div class="bg-muted z-10 sticky top-0 grid grid-cols-subgrid gap-x-3 pb-1 mb-1 border-b-2 border-card">
                 <div class="flex justify-center font-semibold self-end">
                     <Icon icon="radix-icons:clock" class="mb-1" />
                 </div>
