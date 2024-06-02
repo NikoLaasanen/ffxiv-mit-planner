@@ -20,7 +20,8 @@
                 <CardContent>
                     <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                         @change:activeAbility="activation => planStore.toggleActiveAbility(activation)"
-                        @change:rowVisibility="timelineEvent => planStore.toggleEventVisiblity(timelineEvent)" />
+                        @change:rowVisibility="timelineEvent => planStore.toggleEventVisiblity(timelineEvent)"
+                        @change:damageType="(timelineEvent, newType) => planStore.setEventDamageType(timelineEvent, newType)" />
                 </CardContent>
             </Card>
 

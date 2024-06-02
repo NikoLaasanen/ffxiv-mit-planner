@@ -19,7 +19,8 @@
             <CardContent>
                 <Plan v-if="isAllDoneFetching" :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                     @change:active-ability="toggleAbility"
-                    @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)" />
+                    @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)"
+                    @change:damageType="(timelineEvent, newType) => setEventDamageType(timelineEvent, newType)" />
                 <PlanSkeleton v-else />
             </CardContent>
         </Card>
@@ -87,6 +88,18 @@ const toggleEventVisiblity = (timelineEvent: TimelineEvent) => {
         plan.value.timeline.events = plan.value.timeline.events.map(item => {
             if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
                 return { ...item, visible: !(item.visible ?? true) }
+            }
+            return item;
+        });
+    }
+}
+
+const setEventDamageType = (timelineEvent: TimelineEvent, damageType: DamageType) => {
+    if (plan.value) {
+        plan.value.timeline.events = plan.value.timeline.events.map(item => {
+            if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+                item.ability.damageType = damageType;
+                return item
             }
             return item;
         });

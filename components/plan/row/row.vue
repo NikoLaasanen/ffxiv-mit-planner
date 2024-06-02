@@ -3,6 +3,12 @@
         <div class="font-light text-center">{{ timeInMinutes }}</div>
         <div class="group">
             {{ timelineEvent.ability.title }}
+            <img v-if="timelineEvent.ability.damageType === 'physical'" src="/icons/PhysicalDamage.png"
+                class="h-[1.2rem] w-[1.2rem] inline" alt="Physical damage"
+                @click="$.emit('change:damageType', 'magical')">
+            <img v-if="timelineEvent.ability.damageType === 'magical'" src="/icons/MagicalDamage.png"
+                class="h-[1.2rem] w-[1.2rem] inline" alt="Magical damage"
+                @click="$.emit('change:damageType', 'physical')">
             <template v-if="timelineEvent.ability?.interruptable">
                 <Badge v-if="!activeAbilities || !isAbilityInterrupted(timelineEvent, activeAbilities)"
                     variant="destructive">
@@ -58,6 +64,7 @@ const { activationBuffer } = storeToRefs(preferencesStore);
 const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
     (e: 'change:rowVisibility'): void,
+    (e: 'change:damageType', damageType: DamageType): void,
 }>()
 
 const props = defineProps({

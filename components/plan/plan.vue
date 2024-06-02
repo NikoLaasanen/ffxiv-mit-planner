@@ -21,7 +21,8 @@
             <PlanRow v-for="(timelineEvent, key) in timelineEvents" :key="key" :timeline-event="timelineEvent"
                 :active-abilities="activeAbilities" :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
                 @change:activeAbility="item => $.emit('change:activeAbility', item)"
-                @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)" />
+                @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)"
+                @change:damageType="newType => $.emit('change:damageType', timelineEvent, newType)" />
         </div>
         <ScrollBar orientation="horizontal" />
     </ScrollArea>
@@ -47,6 +48,7 @@ import { Icon } from '@iconify/vue'
 const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
     (e: 'change:rowVisibility', timelineEvent: TimelineEvent): void,
+    (e: 'change:damageType', timelineEvent: TimelineEvent, damageType: DamageType): void,
 }>()
 
 const props = defineProps({
