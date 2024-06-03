@@ -36,7 +36,7 @@
             </div>
         </template>
         <Card v-else>
-            <CardContent class="p-6 bg-ffimage">
+            <CardContent class="p-6 bg-ffimage rounded">
                 <div class="grid place-content-center gap-6 text-center">
                     <h2 class="text-6xl text-white">Welcome!</h2>
                     <div>
@@ -184,7 +184,7 @@ useSeoMeta({
 
 <style scoped>
 .bg-ffimage {
-    background-image: url(https://lds-img.finalfantasyxiv.com/h/1/EPptkGFMvUVk1nm2TndbZGLiW0.jpg);
+    background-image: url(/bg.webp);
     background-size: cover;
     background-repeat: no-repeat;
     border-image: linear-gradient(hsl(0 0% 0% / .3), hsl(0 0% 0% / .5)) fill 1;
