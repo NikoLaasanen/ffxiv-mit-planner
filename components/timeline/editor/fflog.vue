@@ -98,7 +98,6 @@ function getBetterCsvData(allLines: string[]) {
         cur.source = event.substring(0, preparesPos - 1);
         cur.event = event.substring(preparesPos + 10, onPos);
         cur.target = `${word1} ${word2}`;
-
         // Find matching damage text
         let dmgText = "";
         for (let i2 = i + 1; i2 < allLines.length; i2++) {
@@ -122,6 +121,7 @@ function getBetterCsvData(allLines: string[]) {
 
         listOfEvents.push(cur);
     }
+
     return listOfEvents
 }
 

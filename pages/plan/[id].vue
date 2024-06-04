@@ -20,12 +20,42 @@
                 <Plan v-if="isAllDoneFetching" :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                     @change:active-ability="toggleAbility"
                     @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)"
-                    @change:damageType="(timelineEvent, newType) => setEventDamageType(timelineEvent, newType)" />
+                    @change:damageType="(timelineEvent, newType) => setTimelineEventDamageType(timelineEvent, newType)" />
                 <PlanSkeleton v-else />
             </CardContent>
         </Card>
 
         <Button @click="updateActiveAbilities" :disabled="!isAllDoneFetching">Save</Button>
+
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Edit timeline</CardTitle>
+                    <CardDescription>Add a new single event.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-col gap-4">
+                        <Separator />
+                        <p>Add a new event</p>
+                        <TimelineEditorEvent @new-event="addNewTimelineEvent" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Import from FFlogs</CardTitle>
+                    <CardDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-col gap-4">
+                        <Separator />
+                        <TimelineEditorFflog @new-timeline="addMultipleTimelineEvents" />
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     </div>
     <div v-else>
         <Alert variant="destructive">
@@ -52,6 +82,7 @@ import { JobKey } from '~/injectionkeys'
 import { isAbilityActivated } from '@/lib/utils'
 
 const { toast } = useToast()
+const { addEvent, hasEvent, setDamageType, setVisibility } = useTimeline();
 
 const route = useRoute();
 const db = useFirestore();
@@ -85,24 +116,29 @@ const toggleAbility = (activation: ActiveAbility) => {
 
 const toggleEventVisiblity = (timelineEvent: TimelineEvent) => {
     if (plan.value) {
-        plan.value.timeline.events = plan.value.timeline.events.map(item => {
-            if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
-                return { ...item, visible: !(item.visible ?? true) }
-            }
-            return item;
-        });
+        setVisibility(plan.value.timeline, timelineEvent);
     }
 }
 
-const setEventDamageType = (timelineEvent: TimelineEvent, damageType: DamageType) => {
+const setTimelineEventDamageType = (timelineEvent: TimelineEvent, damageType: DamageType) => {
     if (plan.value) {
-        plan.value.timeline.events = plan.value.timeline.events.map(item => {
-            if (item.ability.title === timelineEvent.ability.title) {
-                item.ability.damageType = damageType;
-                return item
+        setDamageType(plan.value.timeline, timelineEvent, damageType);
+    }
+}
+
+const addNewTimelineEvent = (newEvent: TimelineEvent) => {
+    if (plan.value) {
+        addEvent(plan.value.timeline, newEvent)
+    }
+}
+
+const addMultipleTimelineEvents = (newEvents: TimelineEvent[]) => {
+    if (plan.value) {
+        newEvents.forEach(item => {
+            if (plan.value && !hasEvent(plan.value.timeline, item)) {
+                plan.value.timeline.events.push(item)
             }
-            return item;
-        });
+        })
     }
 }
 
