@@ -22,6 +22,14 @@
                     @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)"
                     @change:damageType="(timelineEvent, newType) => setTimelineEventDamageType(timelineEvent, newType)" />
                 <PlanSkeleton v-else />
+
+                <div class="mt-4">
+                    <Label>Set damage threshold</Label>
+                    <Input v-model="damageThreshold" type="number" class="max-w-prose" />
+                    <p class="text-muted-foreground text-sm">Damage taken values higher than threshold are considered
+                        dangerous and
+                        will be highlighed in the timeline.</p>
+                </div>
             </CardContent>
         </Card>
 
@@ -82,7 +90,10 @@ import { JobKey } from '~/injectionkeys'
 import { isAbilityActivated } from '@/lib/utils'
 
 const { toast } = useToast()
-const { addEvent, hasEvent, setDamageType, setVisibility } = useTimeline();
+const { addEvent, hasEvent, getDamageType, setDamageType, setVisibility } = useTimeline();
+
+const damageThreshold = ref(0);
+provide('damage-threshold', damageThreshold);
 
 const route = useRoute();
 const db = useFirestore();
@@ -137,13 +148,24 @@ const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: str
         if (addingMethod === 'merge') {
             newEvents.forEach(item => {
                 if (plan.value && !hasEvent(plan.value.timeline, item)) {
+                    const dmgType = getDamageType(plan.value.timeline, item.ability.title)
+                    if (dmgType) {
+                        item.ability.damageType = dmgType;
+                    }
                     plan.value.timeline.events.push(item)
                 }
             })
         } else if (addingMethod === 'replace') {
-            console.log(addingMethod, replaceStart)
             plan.value.timeline.events = plan.value.timeline.events.filter(item => item.time < replaceStart)
-            plan.value.timeline.events.push(...newEvents)
+            newEvents.forEach(item => {
+                if (plan.value) {
+                    const dmgType = getDamageType(plan.value.timeline, item.ability.title)
+                    if (dmgType) {
+                        item.ability.damageType = dmgType;
+                    }
+                    plan.value.timeline.events.push(item)
+                }
+            })
         }
     }
 }

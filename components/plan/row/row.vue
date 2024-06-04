@@ -33,7 +33,7 @@
                 </Tooltip>
             </TooltipProvider>
         </div>
-        <div v-if="showMedianDamage" class="text-center">
+        <div v-if="showMedianDamage" class="text-right">
             <PlanRowDamageValues :damage-values="timelineEvent.ability.unmitigatedDamage"
                 :total-mitigation="totalMitigation" />
         </div>

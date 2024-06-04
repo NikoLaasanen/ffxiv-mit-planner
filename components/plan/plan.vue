@@ -6,7 +6,7 @@
                     <Icon icon="radix-icons:clock" class="mb-1" />
                 </div>
                 <div class="font-semibold self-end">Cast</div>
-                <div v-if="showMedianDamage" class="font-semibold self-end text-center">Median dmg</div>
+                <div v-if="showMedianDamage" class="font-semibold self-end text-right">Damage taken</div>
                 <div class="font-semibold self-end text-center">Mitigated</div>
 
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
@@ -53,7 +53,7 @@ const emit = defineEmits<{
 
 const props = defineProps({
     timeline: Object as PropType<Timeline>,
-    activeAbilities: Array as PropType<ActiveAbility[]>,
+    activeAbilities: Array as PropType<ActiveAbility[]>
 })
 
 const preferencesStore = usePreferencesStore();

@@ -16,6 +16,10 @@ export default () => {
     return timeline.events.some(item => item.time === event.time && item.ability.title === event.ability.title)
   }
 
+  function getDamageType(timeline: Timeline, eventTitle: string) {
+    return timeline.events.find(item => item.ability.title === eventTitle)?.ability.damageType
+  }
+
   function setDamageType(timeline: Timeline, timelineEvent: TimelineEvent, damageType: DamageType) {
     timeline.events = timeline.events.map(item => {
       if (item.ability.title === timelineEvent.ability.title) {
@@ -35,5 +39,5 @@ export default () => {
     });
   }
 
-  return { addEvent, hasEvent, setDamageType, setVisibility }
+  return { addEvent, hasEvent, getDamageType, setDamageType, setVisibility }
 }
