@@ -14,11 +14,17 @@
                     </h4>
                 </div>
                 <Separator />
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-[2fr,1fr] gap-2">
                     <div class="grid grid-cols-subgrid col-span-2 items-center">
                         <Label for="preferences-show-autos" class="self-center font-normal">Show auto attacks</Label>
                         <Checkbox id="preferences-show-autos" :checked="showAutoAttacks"
                             @click="showAutoAttacks = !showAutoAttacks" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-median-dmg" class="self-center font-normal">Show median
+                            damage</Label>
+                        <Checkbox id="preferences-show-median-dmg" :checked="showMedianDamage"
+                            @click="showMedianDamage = !showMedianDamage" />
                     </div>
                     <div class="grid grid-cols-subgrid col-span-2 items-center">
                         <Label for="preferences-activation-buffer" class="font-normal">Activation buffer</Label>
@@ -64,6 +70,7 @@ import { Icon } from '@iconify/vue'
 const preferencesStore = usePreferencesStore();
 const {
     showAutoAttacks,
+    showMedianDamage,
     activationBuffer,
     showAbilityTypeMitigation,
     showAbilityTypeUtility,

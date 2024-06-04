@@ -18,7 +18,8 @@ interface TimelineEvent {
 interface BossAbility {
     title: string,
     interruptable: boolean,
-    damageType: DamageType
+    damageType: DamageType,
+    unmitigatedDamage: number[]
 }
 
 type DamageType = 'none' | 'magical' | 'physical';

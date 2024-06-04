@@ -5,8 +5,8 @@
                 <div class="flex justify-center font-semibold self-end">
                     <Icon icon="radix-icons:clock" class="mb-1" />
                 </div>
-                <div class=" font-semibold self-end">Cast
-                </div>
+                <div class="font-semibold self-end">Cast</div>
+                <div v-if="showMedianDamage" class="font-semibold self-end text-center">Median dmg</div>
                 <div class="font-semibold self-end text-center">Mitigated</div>
 
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
@@ -57,13 +57,12 @@ const props = defineProps({
 })
 
 const preferencesStore = usePreferencesStore();
-const { showAutoAttacks } = storeToRefs(preferencesStore);
+const { showAutoAttacks, showMedianDamage } = storeToRefs(preferencesStore);
 const showHiddenRows = ref(false);
 
 const jobs = inject(JobKey, null)
 const activeJobs = ref([] as JobAbbrevation[]);
 provide(ActiveJobsKey, activeJobs);
-const columnCount = computed(() => activeJobs.value.length ?? 0);
 
 const timelineEvents = computed(() => {
     return props.timeline?.events.filter(item =>
@@ -87,6 +86,10 @@ onMounted(() => {
     // Set active jobs based on initial load
     activeJobs.value = [...new Set(props.activeAbilities?.map(item => item.source))];
 })
+
+const fixedColumnCount = ref(2);
+const dataColumnCount = computed(() => showMedianDamage.value ? 2 : 1);
+const jobColumnCount = computed(() => activeJobs.value.length ?? 0);
 </script>
 
 <style scoped>
@@ -95,10 +98,10 @@ onMounted(() => {
 }
 
 .timeline {
-    grid-template-columns: 50px 1fr 100px repeat(max(v-bind(columnCount), 1), auto);
+    grid-template-columns: 50px 1fr repeat(v-bind(dataColumnCount), 100px) repeat(max(v-bind(jobColumnCount), 1), auto);
 }
 
 .timeline>.grid-cols-subgrid {
-    grid-column: span v-bind(columnCount + 3);
+    grid-column: span v-bind(jobColumnCount + fixedColumnCount + dataColumnCount);
 }
 </style>

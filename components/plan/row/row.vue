@@ -33,6 +33,9 @@
                 </Tooltip>
             </TooltipProvider>
         </div>
+        <div v-if="showMedianDamage" class="text-center">
+            <PlanRowDamageValues :damage-values="timelineEvent.ability.unmitigatedDamage" />
+        </div>
         <div class="text-center">
             <span v-if="totalMitigation > 0">
                 {{ totalMitigation.toLocaleString(undefined, { maximumFractionDigits: 2 }) }}<small
@@ -59,7 +62,7 @@ import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
 
 const preferencesStore = usePreferencesStore();
-const { activationBuffer } = storeToRefs(preferencesStore);
+const { showMedianDamage, activationBuffer } = storeToRefs(preferencesStore);
 
 const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
@@ -133,10 +136,13 @@ const toggleAbility = (jobAbbr: JobAbbrevation, jobAbility: JobAbility) => {
         ability: jobAbility
     } as ActiveAbility)
 }
+
+const fixedColumnCount = ref(2);
+const dataColumnCount = computed(() => showMedianDamage.value ? 2 : 1);
 </script>
 
 <style scoped>
 .grid-cols-subgrid {
-    grid-column: span v-bind(jobCount + 3);
+    grid-column: span v-bind(jobCount + fixedColumnCount + dataColumnCount);
 }
 </style>

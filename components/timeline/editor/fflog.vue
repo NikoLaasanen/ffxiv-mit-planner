@@ -33,46 +33,97 @@ const timeOffset = ref(0);
 const doParse = () => {
     if (rawData.value.trim().length > 0) {
         const timeline = [] as TimelineEvent[];
+        // Transform fflogs data to a more easily readable array
+        for (const row of getBetterCsvData(rawData.value.split('\n'))) {
+            const newEvent = {
+                time: getFFlogsTimeInSeconds(row.timestamp),
+                source: row.source,
+                ability: {
+                    title: row.event,
+                    damageType: 'magical',
+                    unmitigatedDamage: [row.unmitigatedDamage]
+                } as BossAbility
+            } as TimelineEvent;
 
-        for (const row of rawData.value.split('\n')) {
-            const rowData = row.match(/"(.*?)"/g)?.map(item => item.replace(/"/g, ''));
-            if (rowData?.length === 3) {
-                const timeStr = rowData[0];
-                const eventStr = rowData[1];
-                if (eventStr.includes(" prepares ")) {
-                    let [abilitySource, abilityTitle, abilityTarget] = eventStr.split('  ');
-                    abilitySource = abilitySource.replace(" prepares", '');
-                    const [firstname, lastname] = abilityTarget.substring(3).split(' ');
-                    const time = getFFlogsTimeInSeconds(timeStr);
-
-                    // If merging is enabled check last entry
-                    if (mergeBy.value !== "none" && timeline.length > 0) {
-                        const lastEntry = timeline[timeline.length - 1];
-                        if (mergeBy.value === "time" && lastEntry.time === time) {
-                            if (lastEntry.source !== abilitySource) {
-                                lastEntry.source = "Multiple sources";
-                            }
-                            continue;
-                        } else if ((mergeBy.value === "time-source" && lastEntry.source === abilitySource) ||
-                            (mergeBy.value === "both" && lastEntry.time === time && lastEntry.source === abilitySource)) {
-                            continue;
-                        }
+            // If merging is enabled check last entry
+            if (mergeBy.value !== "none" && timeline.length > 0) {
+                const lastEntry = timeline[timeline.length - 1];
+                if (mergeBy.value === "time" && lastEntry.time === newEvent.time) {
+                    if (lastEntry.source !== newEvent.source) {
+                        lastEntry.source = "Multiple sources";
                     }
-
-                    timeline.push({
-                        time: time, source: abilitySource, ability: {
-                            title: abilityTitle,
-                            damageType: 'magical'
-                        } as BossAbility
-                    } as TimelineEvent)
+                    lastEntry.ability.unmitigatedDamage.push(newEvent.ability.unmitigatedDamage[0]);
+                    continue;
+                } else if ((mergeBy.value === "time-source" && lastEntry.source === newEvent.source) ||
+                    (mergeBy.value === "both" && lastEntry.time === newEvent.time && lastEntry.source === newEvent.source)) {
+                    lastEntry.ability.unmitigatedDamage.push(newEvent.ability.unmitigatedDamage[0]);
+                    continue;
                 }
             }
+
+            timeline.push(newEvent)
         }
 
         rawData.value = '';
         emit('newTimeline', timeline);
     }
 };
+
+function getBetterCsvData(allLines: string[]) {
+    const listOfEvents = [];
+
+    for (let i = 0; i < allLines.length; i++) {
+        const line = allLines[i];
+        if (!line.includes("prepares  ")) continue;
+
+        const cur = {} as ImportedData;
+        let event;
+
+        // Find time and raw event text
+        const timeStart = line.indexOf('"');
+        const timeEnd = line.indexOf('"', timeStart + 1);
+        const eventStart = line.indexOf('"', timeEnd + 1);
+        const eventEnd = line.indexOf('"', eventStart + 1);
+
+        cur.timestamp = line.substring(timeStart + 1, timeEnd);
+        event = line.substring(eventStart + 1, eventEnd);
+
+        // Find source, event, target
+        const preparesPos = event.indexOf("prepares  ");
+        const onPos = event.indexOf("  on");
+        const dashPos = event.indexOf("--");
+        const onToDash = event.substring(onPos + 4, dashPos).trim();
+
+        const [word1, word2] = onToDash.split(" ");
+        cur.source = event.substring(0, preparesPos - 1);
+        cur.event = event.substring(preparesPos + 10, onPos);
+        cur.target = `${word1} ${word2}`;
+
+        // Find matching damage text
+        let dmgText = "";
+        for (let i2 = i + 1; i2 < allLines.length; i2++) {
+            const target = allLines[i2];
+            if (!target.includes(cur.source)) continue;
+            if (!target.includes(cur.target)) continue;
+            if (!target.includes(cur.event)) continue;
+            dmgText = target;
+            break;
+        }
+
+        // Find raw damage value
+        const uPosition = dmgText.indexOf("U:");
+        if (uPosition !== -1) {
+            const uSubstring = dmgText.substring(uPosition + 2);
+            const uValue = parseInt(uSubstring); //??? but documentation says first number is used if happens to have multiple
+            cur.unmitigatedDamage = uValue;
+        } else {
+            cur.unmitigatedDamage = 0;
+        }
+
+        listOfEvents.push(cur);
+    }
+    return listOfEvents
+}
 
 const getFFlogsTimeInSeconds = (time: string) => {
     const timeFormat = /^\d{2}:\d{2}\.\d{3}$/;
