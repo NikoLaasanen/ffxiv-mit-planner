@@ -51,7 +51,7 @@
                 <CardContent>
                     <div class="flex flex-col gap-4">
                         <Separator />
-                        <TimelineEditorFflog @new-timeline="addMultipleTimelineEvents" />
+                        <TimelineEditorFflog default-adding-method="merge" @new-timeline="addMultipleTimelineEvents" />
                     </div>
                 </CardContent>
             </Card>
@@ -132,13 +132,19 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     }
 }
 
-const addMultipleTimelineEvents = (newEvents: TimelineEvent[]) => {
+const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: string, replaceStart: number) => {
     if (plan.value) {
-        newEvents.forEach(item => {
-            if (plan.value && !hasEvent(plan.value.timeline, item)) {
-                plan.value.timeline.events.push(item)
-            }
-        })
+        if (addingMethod === 'merge') {
+            newEvents.forEach(item => {
+                if (plan.value && !hasEvent(plan.value.timeline, item)) {
+                    plan.value.timeline.events.push(item)
+                }
+            })
+        } else if (addingMethod === 'replace') {
+            console.log(addingMethod, replaceStart)
+            plan.value.timeline.events = plan.value.timeline.events.filter(item => item.time < replaceStart)
+            plan.value.timeline.events.push(...newEvents)
+        }
     }
 }
 

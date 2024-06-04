@@ -88,7 +88,7 @@
                 <CardContent>
                     <div class="flex flex-col gap-4">
                         <Separator />
-                        <TimelineEditorFflog
+                        <TimelineEditorFflog default-adding-method="hide"
                             @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
                     </div>
                 </CardContent>

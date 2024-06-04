@@ -16,19 +16,46 @@
     </Select>
 
     <Label for="fflogs-import-time-offset">Offset timestamp (s):</Label>
+
     <Input type="number" id="fflogs-import-time-offset" v-model="timeOffset" />
+
+    <template v-if="addingMethod !== 'hide'">
+        <Label for="fflogs-import-adding-method">Choose adding method:</Label>
+        <Select id="fflogs-import-adding-method" v-model="addingMethod">
+            <SelectTrigger>
+                <SelectValue placeholder="Select merge method" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    <SelectItem value="merge">Merge</SelectItem>
+                    <SelectItem value="replace">Replace</SelectItem>
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+
+        <template v-if="addingMethod === 'replace'">
+            <Label for="fflogs-import-time-offset">Start replacing from (s):</Label>
+            <Input type="number" id="fflogs-import-time-offset" v-model="replaceStart" />
+        </template>
+    </template>
 
     <Button class="mt-4" @click="doParse" :disabled="rawData.trim().length === 0">Import</Button>
 </template>
 
 <script lang="ts" setup>
 const emit = defineEmits<{
-    (e: 'newTimeline', timelineEvents: TimelineEvent[]): void
+    (e: 'newTimeline', timelineEvents: TimelineEvent[], addingMethod: string, replaceStart: number): void
 }>()
+
+const props = defineProps({
+    defaultAddingMethod: String as PropType<'hide' | 'merge' | 'replace'>
+})
 
 const rawData = ref('');
 const mergeBy = ref('time');
 const timeOffset = ref(0);
+const addingMethod = ref(props.defaultAddingMethod)
+const replaceStart = ref(0)
 
 const doParse = () => {
     if (rawData.value.trim().length > 0) {
@@ -65,7 +92,7 @@ const doParse = () => {
         }
 
         rawData.value = '';
-        emit('newTimeline', timeline);
+        emit('newTimeline', timeline, addingMethod.value ?? 'merge', replaceStart.value);
     }
 };
 
