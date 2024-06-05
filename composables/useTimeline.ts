@@ -39,5 +39,20 @@ export default () => {
     });
   }
 
-  return { addEvent, hasEvent, getDamageType, setDamageType, setVisibility }
+  function getOffset(eventsA: TimelineEvent[], eventsB: TimelineEvent[]) {
+    let offset = 0;
+    eventsA.forEach(item => {
+      if (item.ability.title !== 'attack') {
+        for (const row of eventsB) {
+          if (row.ability.title === item.ability.title) {
+            offset = row.time - item.time;
+            return;
+          }
+        }
+      }
+    })
+    return offset;
+  }
+
+  return { addEvent, hasEvent, getDamageType, setDamageType, setVisibility, getOffset }
 }

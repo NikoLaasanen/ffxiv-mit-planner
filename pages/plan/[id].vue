@@ -7,11 +7,9 @@
                     {{ plan.timeline.title }}
                 </CardDescription>
                 <CardTitle>
-
                     <div class="flex gap-2">
                         <PlanTitleEditor :title="plan.title"
                             @update:title="newTitle => updateTitle(undefined, newTitle)" class="grow" />
-
                         <PlanFavorite :plan-id="plan.id" :plan-title="plan.title" />
                     </div>
                 </CardTitle>
@@ -23,7 +21,7 @@
                     @change:damageType="(timelineEvent, newType) => setTimelineEventDamageType(timelineEvent, newType)" />
                 <PlanSkeleton v-else />
 
-                <div class="mt-4">
+                <div v-if="showMedianDamage" class="mt-4">
                     <Label>Set damage threshold</Label>
                     <Input v-model="damageThreshold" type="number" class="max-w-prose" />
                     <p class="text-muted-foreground text-sm">Damage taken values higher than threshold are considered
@@ -89,8 +87,11 @@ import { usePendingPromises } from 'vuefire'
 import { JobKey } from '~/injectionkeys'
 import { isAbilityActivated } from '@/lib/utils'
 
+const preferencesStore = usePreferencesStore();
+const { showMedianDamage } = storeToRefs(preferencesStore);
+
 const { toast } = useToast()
-const { addEvent, hasEvent, getDamageType, setDamageType, setVisibility } = useTimeline();
+const { addEvent, hasEvent, getDamageType, setDamageType, setVisibility, getOffset } = useTimeline();
 
 const damageThreshold = ref(0);
 provide('damage-threshold', damageThreshold);
@@ -143,16 +144,20 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     }
 }
 
-const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: string, replaceStart: number) => {
+const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: string, autoAdjust: boolean, replaceStart: number) => {
     if (plan.value) {
         if (addingMethod === 'merge') {
+            let offset = autoAdjust ? getOffset(newEvents, plan.value.timeline.events) : 0;
             newEvents.forEach(item => {
+                item.time += offset;
+                console.log(item)
                 if (plan.value && !hasEvent(plan.value.timeline, item)) {
                     const dmgType = getDamageType(plan.value.timeline, item.ability.title)
                     if (dmgType) {
                         item.ability.damageType = dmgType;
                     }
-                    plan.value.timeline.events.push(item)
+                    plan.value.timeline.events.push(item);
+                    plan.value.timeline.events.sort((a, b) => a.time - b.time);
                 }
             })
         } else if (addingMethod === 'replace') {

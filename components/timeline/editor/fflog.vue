@@ -16,7 +16,6 @@
     </Select>
 
     <Label for="fflogs-import-time-offset">Offset timestamp (s):</Label>
-
     <Input type="number" id="fflogs-import-time-offset" v-model="timeOffset" />
 
     <template v-if="addingMethod !== 'hide'">
@@ -33,7 +32,19 @@
             </SelectContent>
         </Select>
 
-        <template v-if="addingMethod === 'replace'">
+        <template v-if="addingMethod === 'merge' && timeOffset === 0">
+            <div class="my-2 items-top flex gap-x-2">
+                <Checkbox id="fflogs-import-merge-auto-adjust-offset" :checked="autoAjustOffset"
+                    @click="autoAjustOffset = !autoAjustOffset" />
+                <div class="grid gap-1.5 leading-none">
+                    <label for="fflogs-import-merge-auto-adjust-offset"
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Automatically adjust offset
+                    </label>
+                </div>
+            </div>
+        </template>
+        <template v-else-if="addingMethod === 'replace'">
             <Label for="fflogs-import-time-offset">Start replacing from (s):</Label>
             <Input type="number" id="fflogs-import-time-offset" v-model="replaceStart" />
         </template>
@@ -44,7 +55,7 @@
 
 <script lang="ts" setup>
 const emit = defineEmits<{
-    (e: 'newTimeline', timelineEvents: TimelineEvent[], addingMethod: string, replaceStart: number): void
+    (e: 'newTimeline', timelineEvents: TimelineEvent[], addingMethod: string, autoAdjust: boolean, replaceStart: number): void
 }>()
 
 const props = defineProps({
@@ -55,7 +66,10 @@ const rawData = ref('');
 const mergeBy = ref('time');
 const timeOffset = ref(0);
 const addingMethod = ref(props.defaultAddingMethod)
+const autoAjustOffset = ref(true);
 const replaceStart = ref(0)
+
+const applyAutoAdjust = computed(() => autoAjustOffset.value && timeOffset.value === 0)
 
 const doParse = () => {
     if (rawData.value.trim().length > 0) {
@@ -92,7 +106,12 @@ const doParse = () => {
         }
 
         rawData.value = '';
-        emit('newTimeline', timeline, addingMethod.value ?? 'merge', replaceStart.value);
+        emit('newTimeline',
+            timeline,
+            addingMethod.value ?? 'merge',
+            applyAutoAdjust.value,
+            replaceStart.value
+        );
     }
 };
 
