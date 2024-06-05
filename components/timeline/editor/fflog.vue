@@ -135,34 +135,40 @@ function getBetterCsvData(allLines: string[]) {
         event = line.substring(eventStart + 1, eventEnd);
 
         // Find source, event, target
-        const preparesPos = event.indexOf("prepares  ");
-        const onPos = event.indexOf("  on");
-        const dashPos = event.indexOf("--");
-        const onToDash = event.substring(onPos + 4, dashPos).trim();
+        let regex = /(?<source>.*?) prepares (?<event>.*?) on ( \d+|--)?(?<remaining>.*)?/;
+        let match = event.match(regex);
+        let regex2 = /(?<firstname>\w+)\s(?<lastname>\w+)([\s-+\(].*)?/;
+        const remainingText = match?.groups?.remaining ?? '';
+        let match2 = (remainingText).match(regex2);
+        cur.source = match?.groups?.source.trim() ?? '';
+        cur.event = match?.groups?.event.trim() ?? '';
+        cur.target = `${match2?.groups?.firstname.trim() ?? ''} ${match2?.groups?.lastname.trim() ?? ''}`;
+        cur.unmitigatedDamage = 0;
+        console.log(cur)
 
-        const [word1, word2] = onToDash.split(" ");
-        cur.source = event.substring(0, preparesPos - 1);
-        cur.event = event.substring(preparesPos + 10, onPos);
-        cur.target = `${word1} ${word2}`;
-        // Find matching damage text
-        let dmgText = "";
-        for (let i2 = i + 1; i2 < allLines.length; i2++) {
-            const target = allLines[i2];
-            if (!target.includes(cur.source)) continue;
-            if (!target.includes(cur.target)) continue;
-            if (!target.includes(cur.event)) continue;
-            dmgText = target;
-            break;
-        }
+        // Add damage values only if target has no vulnerability
+        if (!remainingText.includes('+')) {
+            // Find matching damage text
+            let dmgText = "";
+            for (let i2 = i + 1; i2 < allLines.length; i2++) {
+                const target = allLines[i2];
+                if (!target.includes(cur.source)) continue;
+                if (!target.includes(cur.target)) continue;
+                if (!target.includes(cur.event)) continue;
+                dmgText = target;
+                break;
+            }
 
-        // Find raw damage value
-        const uPosition = dmgText.indexOf("U:");
-        if (uPosition !== -1) {
-            const uSubstring = dmgText.substring(uPosition + 2);
-            const uValue = parseInt(uSubstring); //??? but documentation says first number is used if happens to have multiple
-            cur.unmitigatedDamage = uValue;
-        } else {
-            cur.unmitigatedDamage = 0;
+            // Find raw damage value
+            const uPosition = dmgText.indexOf("U:");
+            if (uPosition !== -1) {
+                const uSubstring = dmgText.substring(uPosition + 2);
+                const regex = /\+\d+%/;
+                if (!regex.test(uSubstring)) {
+                    const uValue = parseInt(uSubstring); //??? but documentation says first number is used if happens to have multiple
+                    cur.unmitigatedDamage = uValue;
+                }
+            }
         }
 
         listOfEvents.push(cur);

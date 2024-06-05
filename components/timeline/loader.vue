@@ -43,9 +43,13 @@ const open = ref(false);
 const selection = ref('');
 
 const db = useFirestore();
-const timelinesRef = collection(db, 'timeline');
+const timelineTemplatRef = collection(db, 'timelineTemplate');
+const timelineTemplates = useCollection(timelineTemplatRef);
+/*const timelinesRef = collection(db, 'timeline');
 const timelinesQuery = query(timelinesRef, where('tpl', '==', true));
-const timelines = useCollection(timelinesQuery, { ssrKey: 'timelineLoader' });
+const timelines = useCollection(timelinesQuery, { ssrKey: 'timelineLoader' });*/
+
+const timelines = computed(() => timelineTemplates.value.map(tpl => tpl.timeline))
 
 const groups = computed(() => {
     const grouped = timelines.value.reduce((result, obj) => {

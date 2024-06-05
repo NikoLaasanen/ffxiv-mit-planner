@@ -41,16 +41,17 @@ export default () => {
 
   function getOffset(eventsA: TimelineEvent[], eventsB: TimelineEvent[]) {
     let offset = 0;
-    eventsA.forEach(item => {
-      if (item.ability.title !== 'attack') {
+    for (let i = 0; i < eventsA.length && offset < 0; i++) {
+      if (eventsA[i].ability.title !== 'attack') {
         for (const row of eventsB) {
-          if (row.ability.title === item.ability.title) {
-            offset = row.time - item.time;
-            return;
+          if (row.ability.title === eventsA[i].ability.title) {
+            console.log(row.ability.title, row.time, eventsA[i].time)
+            offset = row.time - eventsA[i].time;
+            break;
           }
         }
       }
-    })
+    }
     return offset;
   }
 

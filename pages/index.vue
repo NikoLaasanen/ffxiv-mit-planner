@@ -43,12 +43,8 @@
                         <p class="pb-2 text-white">Let's start by creating a new timeline</p>
                         <TimelineLoader @change:timeline="loadTimeline" title="Load a template" />
                     </div>
-                    <Separator />
-                    <div>
-                        <p class="pb-2 text-white">Recently added</p>
-                        <PlanLatest />
-                    </div>
                     <div v-if="shownLatest.length > 0">
+                        <Separator />
                         <p class="pb-2 text-white">My latest</p>
                         <div class="flex flex-wrap place-content-center gap-2">
                             <Button v-for="latest in shownLatest" as-child>
@@ -150,8 +146,6 @@ const {
             return Promise.reject(new Error('Saving prevented'))
         }
 
-        const newTimeline = plan.value.timeline;
-        newTimeline.tpl = false;
         const { id } = await addDoc(timelineRef, plan.value.timeline);
 
         return addDoc(planRef, {

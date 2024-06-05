@@ -151,8 +151,8 @@ const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: str
         if (addingMethod === 'merge') {
             let offset = autoAdjust ? getOffset(newEvents, plan.value.timeline.events) : 0;
             newEvents.forEach(item => {
+                console.log(item, item.time, offset)
                 item.time += offset;
-                console.log(item)
                 if (plan.value && !hasEvent(plan.value.timeline, item)) {
                     const dmgType = getDamageType(plan.value.timeline, item.ability.title)
                     if (dmgType) {

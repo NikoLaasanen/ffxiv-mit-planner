@@ -1,9 +1,12 @@
+interface TimelineTemplate {
+    contentType: ContentType,
+    timeline: Timeline
+}
+
 interface Timeline {
     id?: string,
     title: string,
-    contentType: ContentType,
-    events: TimelineEvent[],
-    tpl: boolean
+    events: TimelineEvent[]
 }
 
 type ContentType = 'unknown' | 'expert' | 'savage' | 'ultimate';
