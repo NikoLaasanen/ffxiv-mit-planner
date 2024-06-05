@@ -22,7 +22,9 @@
                 :active-abilities="activeAbilities" :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
                 @change:activeAbility="item => $.emit('change:activeAbility', item)"
                 @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)"
-                @change:damageType="newType => $.emit('change:damageType', timelineEvent, newType)" />
+                @change:damageType="newType => $.emit('change:damageType', timelineEvent, newType)"
+                @add:damageValue="newDmgVal => $.emit('add:rowDamageValue', timelineEvent, newDmgVal)"
+                @remove:damageValue="removedKey => $.emit('remove:rowDamageValue', timelineEvent, removedKey)" />
         </div>
         <ScrollBar orientation="horizontal" />
     </ScrollArea>
@@ -49,6 +51,8 @@ const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
     (e: 'change:rowVisibility', timelineEvent: TimelineEvent): void,
     (e: 'change:damageType', timelineEvent: TimelineEvent, damageType: DamageType): void,
+    (e: 'add:rowDamageValue', timelineEvent: TimelineEvent, newValue: number): void,
+    (e: 'remove:rowDamageValue', timelineEvent: TimelineEvent, removedKey: number): void,
 }>()
 
 const props = defineProps({

@@ -30,6 +30,26 @@ export default () => {
     });
   }
 
+  function addDamageValue(timeline: Timeline, timelineEvent: TimelineEvent, newValue: number) {
+    timeline.events = timeline.events.map(item => {
+      if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+        item.ability.unmitigatedDamage.push(newValue);
+        return item
+      }
+      return item;
+    });
+  }
+
+  function removeDamageValue(timeline: Timeline, timelineEvent: TimelineEvent, removedKey: number) {
+    timeline.events = timeline.events.map(item => {
+      if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
+        item.ability.unmitigatedDamage.splice(removedKey, 1);
+        return item
+      }
+      return item;
+    });
+  }
+
   function setVisibility(timeline: Timeline, timelineEvent: TimelineEvent) {
     timeline.events = timeline.events.map(item => {
       if (item.time === timelineEvent.time && item.ability.title === timelineEvent.ability.title) {
@@ -55,5 +75,5 @@ export default () => {
     return offset;
   }
 
-  return { addEvent, hasEvent, getDamageType, setDamageType, setVisibility, getOffset }
+  return { addEvent, hasEvent, getDamageType, setDamageType, addDamageValue, removeDamageValue, setVisibility, getOffset }
 }

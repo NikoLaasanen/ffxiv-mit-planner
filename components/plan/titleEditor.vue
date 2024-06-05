@@ -18,7 +18,7 @@
                 <Tooltip>
                     <TooltipTrigger>
                         <Icon @click="editTitle = true" icon="radix-icons:pencil-1"
-                            class="h-[1.2rem] w-[1.2rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex cursor-pointer" />
+                            class="h-[1rem] w-[1rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex cursor-pointer" />
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Edit title</p>

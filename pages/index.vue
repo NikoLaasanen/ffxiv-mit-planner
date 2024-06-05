@@ -21,7 +21,9 @@
                     <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                         @change:activeAbility="activation => planStore.toggleActiveAbility(activation)"
                         @change:rowVisibility="timelineEvent => planStore.toggleEventVisiblity(timelineEvent)"
-                        @change:damageType="(timelineEvent, newType) => planStore.setEventDamageType(timelineEvent, newType)" />
+                        @change:damageType="(timelineEvent, newType) => planStore.setEventDamageType(timelineEvent, newType)"
+                        @add:rowDamageValue="(timelineEvent, newValue) => planStore.addTimelineEventDamageValue(timelineEvent, newValue)"
+                        @remove:rowDamageValue="(timelineEvent, removedKey) => planStore.removeTimelineEventDamageValue(timelineEvent, removedKey)" />
                 </CardContent>
             </Card>
 

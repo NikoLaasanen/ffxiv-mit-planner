@@ -52,12 +52,12 @@ const timelines = useCollection(timelinesQuery, { ssrKey: 'timelineLoader' });*/
 const timelines = computed(() => timelineTemplates.value.map(tpl => tpl.timeline))
 
 const groups = computed(() => {
-    const grouped = timelines.value.reduce((result, obj) => {
+    const grouped = timelineTemplates.value.reduce((result, obj) => {
         const key = getContentTypeTitle(obj.contentType);
         if (!result[key]) {
             result[key] = [];
         }
-        result[key].push(obj);
+        result[key].push(obj.timeline);
         return result;
     }, {})
     return Object.keys(grouped).map(key => {

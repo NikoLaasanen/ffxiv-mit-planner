@@ -79,6 +79,14 @@ export const usePlanStore = defineStore('plan', {
                 }
                 return item;
             });
+        },
+        addTimelineEventDamageValue(timelineEvent: TimelineEvent, newDamageValue: number) {
+            const { addDamageValue } = useTimeline();
+            addDamageValue(this.plan.timeline, timelineEvent, newDamageValue);
+        },
+        removeTimelineEventDamageValue(timelineEvent: TimelineEvent, removedKey: number) {
+            const { removeDamageValue } = useTimeline();
+            removeDamageValue(this.plan.timeline, timelineEvent, removedKey);
         }
     }
 })

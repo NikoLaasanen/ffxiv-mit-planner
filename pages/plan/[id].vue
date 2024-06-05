@@ -20,7 +20,9 @@
                 <Plan v-if="isAllDoneFetching" :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
                     @change:active-ability="toggleAbility"
                     @change:rowVisibility="timelineEvent => toggleEventVisiblity(timelineEvent)"
-                    @change:damageType="(timelineEvent, newType) => setTimelineEventDamageType(timelineEvent, newType)" />
+                    @change:damageType="(timelineEvent, newType) => setTimelineEventDamageType(timelineEvent, newType)"
+                    @add:rowDamageValue="(timelineEvent, newValue) => addTimelineEventDamageValue(timelineEvent, newValue)"
+                    @remove:rowDamageValue="(timelineEvent, removedKey) => removeTimelineEventDamageValue(timelineEvent, removedKey)" />
                 <PlanSkeleton v-else />
 
                 <div v-if="showMedianDamage" class="mt-4">
@@ -93,7 +95,10 @@ const preferencesStore = usePreferencesStore();
 const { showMedianDamage } = storeToRefs(preferencesStore);
 
 const { toast } = useToast()
-const { addEvent, hasEvent, getDamageType, setDamageType, setVisibility, getOffset } = useTimeline();
+const {
+    addEvent, hasEvent, getDamageType, setDamageType, addDamageValue,
+    removeDamageValue, setVisibility, getOffset
+} = useTimeline();
 
 const damageThreshold = ref(0);
 provide('damage-threshold', damageThreshold);
@@ -137,6 +142,18 @@ const toggleEventVisiblity = (timelineEvent: TimelineEvent) => {
 const setTimelineEventDamageType = (timelineEvent: TimelineEvent, damageType: DamageType) => {
     if (plan.value) {
         setDamageType(plan.value.timeline, timelineEvent, damageType);
+    }
+}
+
+function addTimelineEventDamageValue(timelineEvent: TimelineEvent, newDamageValue: number) {
+    if (plan.value) {
+        addDamageValue(plan.value.timeline, timelineEvent, newDamageValue);
+    }
+}
+
+function removeTimelineEventDamageValue(timelineEvent: TimelineEvent, removedKey: number) {
+    if (plan.value) {
+        removeDamageValue(plan.value.timeline, timelineEvent, removedKey);
     }
 }
 

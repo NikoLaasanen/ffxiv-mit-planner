@@ -35,7 +35,8 @@
         </div>
         <div v-if="showMedianDamage" class="text-right">
             <PlanRowDamageValues :damage-values="timelineEvent.ability.unmitigatedDamage"
-                :total-mitigation="totalMitigation" />
+                :total-mitigation="totalMitigation" @add:damageValue="newDmgVal => $.emit('add:damageValue', newDmgVal)"
+                @remove:damageValue="removedKey => $.emit('remove:damageValue', removedKey)" />
         </div>
         <div class="text-center">
             <span v-if="totalMitigation > 0">
@@ -69,6 +70,8 @@ const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
     (e: 'change:rowVisibility'): void,
     (e: 'change:damageType', damageType: DamageType): void,
+    (e: 'add:damageValue', newValue: number): void,
+    (e: 'remove:damageValue', key: number): void,
 }>()
 
 const props = defineProps({
