@@ -12,11 +12,19 @@
         </div>
     </span>
     <span v-else>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 group grow py-2">
             <span>{{ title }}</span>
-            <Button variant="ghost" @click="editTitle = true" class="flex gap-2">
-                <Icon icon="radix-icons:pencil-1" class="h-[1.2rem] w-[1.2rem]" /> Edit title
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <Icon @click="editTitle = true" icon="radix-icons:pencil-1"
+                            class="h-[1.2rem] w-[1.2rem] text-neutral-600 hover:text-neutral-100 hidden group-hover:inline-flex cursor-pointer" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Edit title</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </div>
     </span>
 </template>
