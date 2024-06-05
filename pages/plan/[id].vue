@@ -10,6 +10,8 @@
                     <div class="flex gap-2">
                         <PlanTitleEditor :title="plan.title"
                             @update:title="newTitle => updateTitle(undefined, newTitle)" class="grow" />
+
+                        <PlanShareButton :title="plan.title" />
                         <PlanFavorite :plan-id="plan.id" :plan-title="plan.title" />
                     </div>
                 </CardTitle>
