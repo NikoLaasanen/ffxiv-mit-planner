@@ -82,12 +82,19 @@ const {
     isLoading: isAddAbility
 } = useAsyncState(
     async (newAbility: JobAbility, targetJobs: JobAbbrevation[]) => {
-        const newId = newAbility.title.toLowerCase().replace(' ', '_')
+        const newId = newAbility.title.toLowerCase().replace(/ /g, '_')
         await setDoc(doc(jobAbilityRef, newId), newAbility).catch(e => console.log(e))
         for (const target of targetJobs) {
-            const newAbilities = [...(getJob(target)?.abilities ?? []), newAbility]
+
+            // Fetch refs for abilities
+            const updatedData = getJob(target)?.abilities.map(obj => {
+                return doc(jobAbilityRef, obj.title.toLowerCase().replace(/ /g, '_'))
+            }) ?? [];
+            updatedData.push(doc(jobAbilityRef, newAbility.title.toLowerCase().replace(/ /g, '_')));
+            getJob(target)?.abilities.push(newAbility);
+
             await updateDoc(doc(jobRef, target), {
-                abilities: newAbilities
+                abilities: updatedData
             }).then(() => {
                 toast({ description: 'Abilities updated' });
             }).catch(() => {

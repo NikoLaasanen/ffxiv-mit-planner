@@ -156,7 +156,7 @@ const {
             activeAbilities: plan.value.activeAbilities.map(obj => {
                 let newData = { ...obj };
                 // @ts-ignore: Create reference to document for db update
-                newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase().replace(' ', '_'))
+                newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase().replace(/ /g, '_'))
                 return newData;
             }),
             createdAt: serverTimestamp()
