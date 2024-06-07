@@ -54,7 +54,8 @@ const db = useFirestore();
 const jobRef = collection(db, 'job');
 const jobAbilityRef = collection(db, 'jobability');
 
-const { data: jobs, pending: loadingJobs } = useCollection<Job>(jobRef);
+const { data: jobData, pending: loadingJobs } = useCollection<Job>(jobRef);
+const jobs = computed(() => jobData.value.filter(j => j.abbr !== 'LB'))
 provide(JobKey, jobs);
 
 const abilityTypes = computed(() => jobs.value.reduce((types, job) => {

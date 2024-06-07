@@ -14,7 +14,7 @@ type CasterDpsAbbr = 'BLM' | 'SMN' | 'RDM';
 type RangedDpsAbbr = 'BRD' | 'MCH' | 'DNC';
 type DpsAbbr = MeleeDpsAbbr | CasterDpsAbbr | RangedDpsAbbr;
 
-type JobAbbrevation = TankAbbr | HealerAbbr | DpsAbbr;
+type JobAbbrevation = TankAbbr | HealerAbbr | DpsAbbr | 'LB';
 
 type JobRole = 'tank' | 'healer' | 'dps';
 type JosSubRole = 'regen' | 'shield' | 'melee' | 'caster' | 'ranged';
