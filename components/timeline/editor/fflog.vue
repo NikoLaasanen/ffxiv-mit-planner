@@ -81,7 +81,7 @@ const doParse = () => {
             const row = prettyData[i];
 
             if (mergeBy.value !== "none" && i > 1) {
-                const lastEntry = prettyData[i - 1];
+                const lastEntry = mergedData[mergedData.length - 1];
                 // Merge: time
                 if ((mergeBy.value === "time" && lastEntry.event === row.event && lastEntry.timestamp === row.timestamp)) {
                     lastEntry.unmitigatedDamage.push(...row.unmitigatedDamage)
