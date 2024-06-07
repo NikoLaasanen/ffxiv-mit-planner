@@ -14,6 +14,8 @@
             <Button variant="destructive" @click="preferencesStore.clearJobAbilityVisibilites()">Clear
                 visiblities</Button>
         </div>
+        <FfxivEditorAbility
+            @new-ability="(newAbility, targetJobs) => addNewAbility(undefined, newAbility, targetJobs)" />
     </div>
 
     <div class="mt-4 border rounded p-2 bg-muted">
@@ -40,13 +42,20 @@
 </template>
 
 <script lang="ts" setup>
-import { collection } from 'firebase/firestore'
+import { useAsyncState } from '@vueuse/core'
+import { collection, doc, setDoc, updateDoc } from 'firebase/firestore'
+import { JobKey } from '~/injectionkeys'
+import { useToast } from '@/components/ui/toast/use-toast'
+
+const { toast } = useToast()
 
 const preferencesStore = usePreferencesStore();
 const db = useFirestore();
 const jobRef = collection(db, 'job');
+const jobAbilityRef = collection(db, 'jobability');
 
 const { data: jobs, pending: loadingJobs } = useCollection<Job>(jobRef);
+provide(JobKey, jobs);
 
 const abilityTypes = computed(() => jobs.value.reduce((types, job) => {
     job.abilities.forEach((ability: JobAbility) => {
@@ -67,6 +76,31 @@ const setAbilityVisibilityByType = (abilityType: JobAbilityType, show: boolean) 
         })
     });
 }
+
+const {
+    execute: addNewAbility,
+    isLoading: isAddAbility
+} = useAsyncState(
+    async (newAbility: JobAbility, targetJobs: JobAbbrevation[]) => {
+        const newId = newAbility.title.toLowerCase().replace(' ', '_')
+        await setDoc(doc(jobAbilityRef, newId), newAbility).catch(e => console.log(e))
+        for (const target of targetJobs) {
+            const newAbilities = [...(getJob(target)?.abilities ?? []), newAbility]
+            await updateDoc(doc(jobRef, target), {
+                abilities: newAbilities
+            }).then(() => {
+                toast({ description: 'Abilities updated' });
+            }).catch(() => {
+                toast({ description: 'Ability update failed', variant: 'destructive' });
+            })
+        }
+    },
+    null,
+    { immediate: false }
+)
+
+
+const getJob = (jobAbbr: JobAbbrevation) => jobs?.value.find(job => job.abbr === jobAbbr);
 
 useSeoMeta({
     title: 'Jobs & abilities - FFXIV mitigation planner'
