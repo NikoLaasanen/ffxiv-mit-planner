@@ -73,36 +73,45 @@ const applyAutoAdjust = computed(() => autoAjustOffset.value && timeOffset.value
 
 const doParse = () => {
     if (rawData.value.trim().length > 0) {
-        const timeline = [] as TimelineEvent[];
         // Transform fflogs data to a more easily readable array
-        for (const row of getBetterCsvData(rawData.value.split('\n'))) {
-            const newEvent = {
-                time: getFFlogsTimeInSeconds(row.timestamp),
-                source: row.source,
-                ability: {
-                    title: row.event,
-                    damageType: 'magical',
-                    unmitigatedDamage: [row.unmitigatedDamage]
-                } as BossAbility
-            } as TimelineEvent;
+        const mergedData = [] as ImportedData[];
+        const prettyData = getBetterCsvData(rawData.value.split('\n'));
 
-            // If merging is enabled check last entry
-            if (mergeBy.value !== "none" && timeline.length > 0) {
-                const lastEntry = timeline[timeline.length - 1];
-                if (mergeBy.value === "time" && lastEntry.time === newEvent.time) {
-                    if (lastEntry.source !== newEvent.source) {
-                        lastEntry.source = "Multiple sources";
+        for (let i = 0; i < prettyData.length; i++) {
+            const row = prettyData[i];
+
+            if (mergeBy.value !== "none" && i > 1) {
+                const lastEntry = prettyData[i - 1];
+                // Merge: time
+                if ((mergeBy.value === "time" && lastEntry.event === row.event && lastEntry.timestamp === row.timestamp)) {
+                    lastEntry.unmitigatedDamage.push(...row.unmitigatedDamage)
+                    lastEntry.unmitigatedDamage.sort();
+                    if (lastEntry.source !== row.source) {
+                        lastEntry.multipleSource = true;
                     }
-                    lastEntry.ability.unmitigatedDamage.push(newEvent.ability.unmitigatedDamage[0]);
                     continue;
-                } else if ((mergeBy.value === "time-source" && lastEntry.source === newEvent.source) ||
-                    (mergeBy.value === "both" && lastEntry.time === newEvent.time && lastEntry.source === newEvent.source)) {
-                    lastEntry.ability.unmitigatedDamage.push(newEvent.ability.unmitigatedDamage[0]);
+                }
+                // Merge: time and source
+                else if (mergeBy.value === "time-source" && lastEntry.event === row.event && lastEntry.timestamp === row.timestamp && lastEntry.source === row.source) {
+                    lastEntry.unmitigatedDamage.push(...row.unmitigatedDamage)
+                    lastEntry.unmitigatedDamage.sort();
                     continue;
                 }
             }
+            mergedData.push(row);
+        }
 
-            timeline.push(newEvent)
+        const timeline = [] as TimelineEvent[];
+        for (const row of mergedData) {
+            timeline.push({
+                time: getFFlogsTimeInSeconds(row.timestamp),
+                source: row.multipleSource ? 'Multiple sources' : row.source,
+                ability: {
+                    title: row.event,
+                    damageType: 'magical',
+                    unmitigatedDamage: row.unmitigatedDamage
+                } as BossAbility
+            } as TimelineEvent);
         }
 
         rawData.value = '';
@@ -141,10 +150,10 @@ function getBetterCsvData(allLines: string[]) {
         const remainingText = match?.groups?.remaining ?? '';
         let match2 = (remainingText).match(regex2);
         cur.source = match?.groups?.source.trim() ?? '';
+        cur.multipleSource = false;
         cur.event = match?.groups?.event.trim() ?? '';
         cur.target = `${match2?.groups?.firstname.trim() ?? ''} ${match2?.groups?.lastname.trim() ?? ''}`;
-        cur.unmitigatedDamage = 0;
-        console.log(cur)
+        cur.unmitigatedDamage = [];
 
         // Add damage values only if target has no vulnerability
         if (!remainingText.includes('+')) {
@@ -166,7 +175,7 @@ function getBetterCsvData(allLines: string[]) {
                 const regex = /\+\d+%/;
                 if (!regex.test(uSubstring)) {
                     const uValue = parseInt(uSubstring); //??? but documentation says first number is used if happens to have multiple
-                    cur.unmitigatedDamage = uValue;
+                    cur.unmitigatedDamage.push(uValue);
                 }
             }
         }

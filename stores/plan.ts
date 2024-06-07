@@ -8,7 +8,6 @@ export const usePlanStore = defineStore('plan', {
             title: "",
             timeline: {
                 title: '',
-                contentType: 'unknown',
                 events: [] as TimelineEvent[]
             } as Timeline,
             activeAbilities: [] as ActiveAbility[],
@@ -28,7 +27,6 @@ export const usePlanStore = defineStore('plan', {
                 title: "",
                 timeline: {
                     title: '',
-                    contentType: 'unknown',
                     events: [] as TimelineEvent[]
                 } as Timeline,
                 activeAbilities: [] as ActiveAbility[],

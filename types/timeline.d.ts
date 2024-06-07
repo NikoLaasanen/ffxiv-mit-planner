@@ -9,7 +9,7 @@ interface Timeline {
     events: TimelineEvent[]
 }
 
-type ContentType = 'unknown' | 'expert' | 'savage' | 'ultimate';
+type ContentType = 'expert' | 'savage' | 'ultimate';
 
 interface TimelineEvent {
     time: number,
