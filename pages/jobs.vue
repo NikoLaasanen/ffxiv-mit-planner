@@ -28,8 +28,8 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-subgrid col-span-1">
-                    <ul class="grid gap-2">
-                        <li v-for="ability in job.abilities" :key="ability.title" class="flex items-center gap-2">
+                    <ul class="grid gap-2" v-if="job.abilities.length > 0">
+                        <li v-for="(ability, key) in job.abilities" :key="key" class="flex items-center gap-2">
                             <FfxivJobAbilityCard :ability="ability"
                                 @change:visibility="preferencesStore.toggleJobAbilityVisibility(ability)" />
                         </li>
@@ -55,12 +55,12 @@ const jobRef = collection(db, 'job');
 const jobAbilityRef = collection(db, 'jobability');
 
 const { data: jobData, pending: loadingJobs } = useCollection<Job>(jobRef);
-const jobs = computed(() => jobData.value.filter(j => j.abbr !== 'LB'))
+const jobs = computed(() => jobData.value.filter(j => j.abbr !== 'LB') ?? [])
 provide(JobKey, jobs);
 
 const abilityTypes = computed(() => jobs.value.reduce((types, job) => {
     job.abilities.forEach((ability: JobAbility) => {
-        if (!types.includes(ability.type)) {
+        if (ability?.type && !types.includes(ability?.type)) {
             types.push(ability.type)
         }
     });
@@ -88,7 +88,8 @@ const {
         for (const target of targetJobs) {
 
             // Fetch refs for abilities
-            const updatedData = getJob(target)?.abilities.map(obj => {
+            const updatedData = getJob(target)?.abilities.filter(obj => obj.title !== newAbility.title
+            ).map(obj => {
                 return doc(jobAbilityRef, obj.title.toLowerCase().replace(/ /g, '_'))
             }) ?? [];
             updatedData.push(doc(jobAbilityRef, newAbility.title.toLowerCase().replace(/ /g, '_')));

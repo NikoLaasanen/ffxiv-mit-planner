@@ -6,6 +6,8 @@
                     <Icon icon="radix-icons:clock" class="mb-1" />
                 </div>
                 <div class="font-semibold self-end">Cast</div>
+                <div v-if="showColSource" class="font-semibold self-end">Source</div>
+                <div v-if="showColSourceCount" class="font-semibold self-end text-right">Source count</div>
                 <div v-if="showMedianDamage" class="font-semibold self-end text-right">Damage taken</div>
                 <div class="font-semibold self-end text-center">Mitigated</div>
 
@@ -74,7 +76,7 @@ const props = defineProps({
 })
 
 const preferencesStore = usePreferencesStore();
-const { showAutoAttacks, showMedianDamage } = storeToRefs(preferencesStore);
+const { showAutoAttacks, showMedianDamage, showColSource, showColSourceCount } = storeToRefs(preferencesStore);
 const showHiddenRows = ref(false);
 const showDetailedDamageValues = ref(false);
 provide('showDetailedDamageValues', showDetailedDamageValues);
@@ -109,7 +111,14 @@ onMounted(() => {
 })
 
 const fixedColumnCount = ref(2);
-const dataColumnCount = computed(() => showMedianDamage.value ? 2 : 1);
+const dataColumnCount = computed(() => {
+    let columns = 1;
+    if (showMedianDamage.value) columns++;
+    if (showColSource.value) columns++;
+    if (showColSourceCount.value) columns++;
+
+    return columns;
+});
 const jobColumnCount = computed(() => activeJobs.value.length ?? 0);
 </script>
 

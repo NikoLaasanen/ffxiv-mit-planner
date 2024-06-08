@@ -1,7 +1,6 @@
 interface ImportedData {
     timestamp: string,
-    source: string,
-    multipleSource: boolean,
+    source: string[],
     event: string,
     target: string,
     unmitigatedDamage: number[]

@@ -11,7 +11,9 @@ export const usePreferencesStore = defineStore('preferences', {
         showAbilityTypeBuff: ref(false),
         showParty: ref(true),
         showSingle: ref(false),
-        jobAbilityHidden: ref([] as string[])
+        jobAbilityHidden: ref([] as string[]),
+        showColSource: ref(false),
+        showColSourceCount: ref(false)
     }),
     persist: {
         storage: persistedState.localStorage

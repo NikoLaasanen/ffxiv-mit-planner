@@ -14,6 +14,7 @@ type ContentType = 'expert' | 'savage' | 'ultimate';
 interface TimelineEvent {
     time: number,
     source: string,
+    sourceCount: number,
     ability: BossAbility,
     visible: boolean
 }

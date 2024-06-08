@@ -33,6 +33,7 @@
                             <span class="grid place-content-center">s</span>
                         </span>
                     </div>
+
                     <div class="col-span-3 flex flex-col gap-2">
                         <Separator />
                         <p class="text-xs font-medium text-muted-foreground">Show abilities by target:</p>
@@ -45,6 +46,7 @@
                         <Label for="preferences-show-autos" class="self-center font-normal">Single target</Label>
                         <Checkbox id="preferences-show-autos" :checked="showSingle" @click="showSingle = !showSingle" />
                     </div>
+
                     <div class="col-span-3 flex flex-col gap-2">
                         <Separator />
                         <p class="text-xs font-medium text-muted-foreground">Show ability type on timeline:</p>
@@ -69,6 +71,22 @@
                         <Checkbox id="preferences-show-autos" :checked="showAbilityTypeBuff"
                             @click="showAbilityTypeBuff = !showAbilityTypeBuff" />
                     </div>
+
+                    <div class="col-span-3 flex flex-col gap-2">
+                        <Separator />
+                        <p class="text-xs font-medium text-muted-foreground">Set columns on timeline:</p>
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-col-source" class="self-center font-normal">Source</Label>
+                        <Checkbox id="preferences-show-col-source" :checked="showColSource"
+                            @click="showColSource = !showColSource" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-col-source-count" class="self-center font-normal">Source
+                            count</Label>
+                        <Checkbox id="preferences-show-col-source-count" :checked="showColSourceCount"
+                            @click="showColSourceCount = !showColSourceCount" />
+                    </div>
                 </div>
             </div>
         </PopoverContent>
@@ -89,6 +107,8 @@ const {
     showAbilityTypeMitigation,
     showAbilityTypeUtility,
     showAbilityTypeInterrupt,
-    showAbilityTypeBuff
+    showAbilityTypeBuff,
+    showColSource,
+    showColSourceCount
 } = storeToRefs(preferencesStore);
 </script>

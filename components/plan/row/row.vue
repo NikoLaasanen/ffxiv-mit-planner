@@ -33,6 +33,12 @@
                 </Tooltip>
             </TooltipProvider>
         </div>
+        <div v-if="showColSource">{{ timelineEvent.source }}</div>
+        <div v-if="showColSourceCount" class="text-right">
+            <template v-if="timelineEvent.sourceCount > 1">
+                {{ timelineEvent.sourceCount }}<span class="text-muted-foreground">x</span>
+            </template>
+        </div>
         <div v-if="showMedianDamage" class="text-right">
             <PlanRowDamageValues :damage-values="timelineEvent.ability.unmitigatedDamage"
                 :total-mitigation="totalMitigation" @add:damageValue="newDmgVal => $.emit('add:damageValue', newDmgVal)"
@@ -64,7 +70,7 @@ import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
 
 const preferencesStore = usePreferencesStore();
-const { showMedianDamage, activationBuffer } = storeToRefs(preferencesStore);
+const { showMedianDamage, activationBuffer, showColSource, showColSourceCount } = storeToRefs(preferencesStore);
 
 const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,
@@ -142,7 +148,15 @@ const toggleAbility = (jobAbbr: JobAbbrevation, jobAbility: JobAbility) => {
 }
 
 const fixedColumnCount = ref(2);
-const dataColumnCount = computed(() => showMedianDamage.value ? 2 : 1);
+const dataColumnCount = computed(() => {
+    let columns = 1;
+    if (showMedianDamage.value) columns++;
+    if (showColSource.value) columns++;
+    if (showColSource.value) columns++;
+    if (showColSourceCount.value) columns++;
+
+    return columns;
+});
 </script>
 
 <style scoped>

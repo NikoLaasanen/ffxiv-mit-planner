@@ -86,8 +86,8 @@ const doParse = () => {
                 if ((mergeBy.value === "time" && lastEntry.event === row.event && lastEntry.timestamp === row.timestamp)) {
                     lastEntry.unmitigatedDamage.push(...row.unmitigatedDamage)
                     lastEntry.unmitigatedDamage.sort();
-                    if (lastEntry.source !== row.source) {
-                        lastEntry.multipleSource = true;
+                    if (!lastEntry.source.includes(row.source[0])) {
+                        lastEntry.source.push(row.source[0]);
                     }
                     continue;
                 }
@@ -100,12 +100,14 @@ const doParse = () => {
             }
             mergedData.push(row);
         }
+        console.log(mergedData)
 
         const timeline = [] as TimelineEvent[];
         for (const row of mergedData) {
             timeline.push({
                 time: getFFlogsTimeInSeconds(row.timestamp),
-                source: row.multipleSource ? 'Multiple sources' : row.source,
+                source: row.source.length > 1 ? `Multiple sources` : row.source[0],
+                sourceCount: row.source.length,
                 ability: {
                     title: row.event,
                     damageType: 'magical',
@@ -149,8 +151,7 @@ function getBetterCsvData(allLines: string[]) {
         let regex2 = /(?<firstname>\w+)\s(?<lastname>\w+)([\s-+\(].*)?/;
         const remainingText = match?.groups?.remaining ?? '';
         let match2 = (remainingText).match(regex2);
-        cur.source = match?.groups?.source.trim() ?? '';
-        cur.multipleSource = false;
+        cur.source = [match?.groups?.source.trim() ?? ''];
         cur.event = match?.groups?.event.trim() ?? '';
         cur.target = `${match2?.groups?.firstname.trim() ?? ''} ${match2?.groups?.lastname.trim() ?? ''}`;
         cur.unmitigatedDamage = [];
@@ -161,7 +162,7 @@ function getBetterCsvData(allLines: string[]) {
             let dmgText = "";
             for (let i2 = i + 1; i2 < allLines.length; i2++) {
                 const target = allLines[i2];
-                if (!target.includes(cur.source)) continue;
+                if (!target.includes(cur.source[0])) continue;
                 if (!target.includes(cur.target)) continue;
                 if (!target.includes(cur.event)) continue;
                 dmgText = target;
