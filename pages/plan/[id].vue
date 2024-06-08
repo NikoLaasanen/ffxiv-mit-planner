@@ -35,37 +35,56 @@
             </CardContent>
         </Card>
 
-        <Button @click="updateActiveAbilities" :disabled="!isAllDoneFetching">Save</Button>
+        <div class="flex gap-2">
+            <Button @click="updateActiveAbilities" :disabled="!isAllDoneFetching" class="grow">Save</Button>
 
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Edit timeline</CardTitle>
-                    <CardDescription>Add a new single event.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="flex flex-col gap-4">
-                        <Separator />
-                        <p>Add a new event</p>
-                        <TimelineEditorEvent @new-event="addNewTimelineEvent" />
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Import from FFlogs</CardTitle>
-                    <CardDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="flex flex-col gap-4">
-                        <Separator />
-                        <TimelineEditorFflog default-adding-method="merge" @new-timeline="addMultipleTimelineEvents" />
-                    </div>
-                </CardContent>
-            </Card>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger as-child>
+                        <Button @click="dialogAddSingleEventOpen = true" variant="outline">
+                            <Icon icon="radix-icons:file-plus" />
+                            <div class="sr-only">Add new timeline event</div>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        Add new timeline event
+                    </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                    <TooltipTrigger as-child>
+                        <Button @click="dialogAddSingleEventOpen = true" variant="outline">
+                            <Icon icon="radix-icons:file-text" />
+                            <div class="sr-only">Import from FFlogs</div>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        Import from FFlogs
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </div>
+
+        <Dialog v-model:open="dialogAddSingleEventOpen">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add new timeline event</DialogTitle>
+                </DialogHeader>
+                <Separator />
+                <DialogDescription>Add a new single event.</DialogDescription>
+                <TimelineEditorEvent @new-event="addNewTimelineEvent" />
+            </DialogContent>
+        </Dialog>
+        <Dialog v-model:open="dialogAddSingleEventOpen">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Import from FFlogs</DialogTitle>
+                </DialogHeader>
+                <Separator />
+                <DialogDescription>Download a damage events log from FFlogs and insert the data to the textarea below.
+                </DialogDescription>
+                <TimelineEditorFflog default-adding-method="merge" @new-timeline="addMultipleTimelineEvents" />
+            </DialogContent>
+        </Dialog>
     </div>
     <div v-else>
         <Alert variant="destructive">
@@ -102,6 +121,9 @@ const {
 
 const damageThreshold = ref(0);
 provide('damage-threshold', damageThreshold);
+
+const dialogAddSingleEventOpen = ref(false);
+const dialogImportFflogsOpen = ref(false);
 
 const route = useRoute();
 const db = useFirestore();
@@ -158,12 +180,14 @@ function removeTimelineEventDamageValue(timelineEvent: TimelineEvent, removedKey
 }
 
 const addNewTimelineEvent = (newEvent: TimelineEvent) => {
+    dialogAddSingleEventOpen.value = false;
     if (plan.value) {
         addEvent(plan.value.timeline, newEvent)
     }
 }
 
 const addMultipleTimelineEvents = (newEvents: TimelineEvent[], addingMethod: string, autoAdjust: boolean, replaceStart: number) => {
+    dialogAddSingleEventOpen.value = false;
     if (plan.value) {
         if (addingMethod === 'merge') {
             let offset = autoAdjust ? getOffset(newEvents, plan.value.timeline.events) : 0;
