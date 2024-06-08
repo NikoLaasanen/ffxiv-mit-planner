@@ -8,8 +8,8 @@
                     </CardDescription>
                     <CardTitle>
                         <div class="flex gap-2">
-                            <PlanTitleEditor :title="planTitle" @update:title="newTitle => planTitle = newTitle"
-                                class="grow" />
+                            <PlanHeaderTitleEditor :title="planTitle"
+                                @update:title="(newTitle: string) => planTitle = newTitle" class="grow" />
                             <Button variant="ghost" @click="planStore.clearPlan()">
                                 <Icon icon="radix-icons:reset" class="h-[1.2rem] w-[1.2rem]" /> <span
                                     class="sr-only">Back to start</span>

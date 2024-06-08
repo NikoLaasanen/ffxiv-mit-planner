@@ -8,11 +8,11 @@
                 </CardDescription>
                 <CardTitle>
                     <div class="flex gap-2">
-                        <PlanTitleEditor :title="plan.title"
-                            @update:title="newTitle => updateTitle(undefined, newTitle)" class="grow" />
+                        <PlanHeaderTitleEditor :title="plan.title"
+                            @update:title="(newTitle: string) => updateTitle(undefined, newTitle)" class="grow" />
 
-                        <PlanShareButton :title="plan.title" />
-                        <PlanFavorite :plan-id="plan.id" :plan-title="plan.title" />
+                        <PlanHeaderShareButton :title="plan.title" />
+                        <PlanHeaderFavorite :plan-id="plan.id" :plan-title="plan.title" />
                     </div>
                 </CardTitle>
             </CardHeader>
