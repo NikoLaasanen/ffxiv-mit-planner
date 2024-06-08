@@ -31,16 +31,26 @@
     <div class="mt-2 flex flex-wrap gap-2">
         <PlanJobList :active-jobs="activeJobs" @change:active-job="jobAbbr => toggleActiveJob(jobAbbr)" />
     </div>
-    <div class="mt-4 flex flex-col gap-2">
-        <div class="flex flex-wrap gap-2">
-            <Checkbox id="plan-show-hidden-items" :checked="showHiddenRows" @click="showHiddenRows = !showHiddenRows" />
-            <Label for="plan-show-hidden-items" class="self-center font-normal">Show hidden items</Label>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
+        <div class="flex flex-col gap-2">
+            <div class="flex flex-wrap gap-2">
+                <Checkbox id="plan-show-hidden-items" :checked="showHiddenRows"
+                    @click="showHiddenRows = !showHiddenRows" />
+                <Label for="plan-show-hidden-items" class="self-center font-normal">Show hidden items</Label>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <Checkbox id="plan-show-detailed-damage-values" :checked="showDetailedDamageValues"
+                    @click="showDetailedDamageValues = !showDetailedDamageValues" />
+                <Label for="plan-show-detailed-damage-values" class="self-center font-normal">Show detailed damage
+                    values</Label>
+            </div>
         </div>
-        <div class="flex flex-wrap gap-2">
-            <Checkbox id="plan-show-detailed-damage-values" :checked="showDetailedDamageValues"
-                @click="showDetailedDamageValues = !showDetailedDamageValues" />
-            <Label for="plan-show-detailed-damage-values" class="self-center font-normal">Show detailed damage
-                values</Label>
+        <div v-if="showMedianDamage">
+            <Label>Set damage threshold</Label>
+            <Input v-model="damageThreshold" type="number" class="max-w-prose" />
+            <p class="text-muted-foreground text-sm">Damage taken values higher than threshold are considered
+                dangerous and
+                will be highlighed in the timeline.</p>
         </div>
     </div>
 </template>
@@ -68,6 +78,8 @@ const { showAutoAttacks, showMedianDamage } = storeToRefs(preferencesStore);
 const showHiddenRows = ref(false);
 const showDetailedDamageValues = ref(false);
 provide('showDetailedDamageValues', showDetailedDamageValues);
+const damageThreshold = ref(0);
+provide('damage-threshold', damageThreshold);
 
 const jobs = inject(JobKey, null)
 const activeJobs = ref([] as JobAbbrevation[]);

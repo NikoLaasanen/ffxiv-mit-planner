@@ -24,14 +24,6 @@
                     @add:rowDamageValue="(timelineEvent, newValue) => addTimelineEventDamageValue(timelineEvent, newValue)"
                     @remove:rowDamageValue="(timelineEvent, removedKey) => removeTimelineEventDamageValue(timelineEvent, removedKey)" />
                 <PlanSkeleton v-else />
-
-                <div v-if="showMedianDamage" class="mt-4">
-                    <Label>Set damage threshold</Label>
-                    <Input v-model="damageThreshold" type="number" class="max-w-prose" />
-                    <p class="text-muted-foreground text-sm">Damage taken values higher than threshold are considered
-                        dangerous and
-                        will be highlighed in the timeline.</p>
-                </div>
             </CardContent>
         </Card>
 
@@ -110,17 +102,11 @@ import { usePendingPromises } from 'vuefire'
 import { JobKey } from '~/injectionkeys'
 import { isAbilityActivated } from '@/lib/utils'
 
-const preferencesStore = usePreferencesStore();
-const { showMedianDamage } = storeToRefs(preferencesStore);
-
 const { toast } = useToast()
 const {
     addEvent, hasEvent, getDamageType, setDamageType, addDamageValue,
     removeDamageValue, setVisibility, getOffset
 } = useTimeline();
-
-const damageThreshold = ref(0);
-provide('damage-threshold', damageThreshold);
 
 const dialogAddSingleEventOpen = ref(false);
 const dialogImportFflogsOpen = ref(false);
