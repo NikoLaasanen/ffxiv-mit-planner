@@ -26,6 +26,11 @@ export const useMyPlansStore = defineStore('my-plans', {
                 this.favorites = this.favorites.filter(item => item.id !== planId)
                 toast({ description: 'Removed from favorites' });
             }
+        },
+        removeLatest(planId: string) {
+            const { toast } = useToast()
+            this.latest = this.latest.filter(item => item.id !== planId)
+            toast({ description: 'Removed from latest' });
         }
     }
 })

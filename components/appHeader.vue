@@ -20,7 +20,7 @@
                         <div class="icon">
                             <Icon icon="radix-icons:bookmark" class="h-[1.2rem] w-[1.2rem]" />
                         </div>
-                        <div class="text">Favorites</div>
+                        <div class="text">My plans</div>
                     </NuxtLink>
                 </Button>
 
