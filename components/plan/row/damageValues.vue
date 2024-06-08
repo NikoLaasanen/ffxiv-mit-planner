@@ -1,5 +1,5 @@
 <template>
-    <TooltipProvider>
+    <TooltipProvider :delay-duration="200">
         <Tooltip>
             <TooltipTrigger>
                 <span :class="{ 'text-neutral-600': damageThreshold > 0 && damageThreshold > mitigated }">
@@ -22,31 +22,23 @@
                     </p>
                 </template>
 
-                <template v-if="(damageValues?.length ?? 0) > 0">
+                <template v-if="(damageValues?.length ?? 0) > 0 && showDetailedValues">
                     <Separator class="my-2" />
-                    <Button @click="showDetailedValues = !showDetailedValues" variant="outline">
-                        <span v-if="!showDetailedValues">Open detailed values
-                            <span class="text-muted-foreground">({{ damageValues?.length }})</span>
-                        </span>
-                        <span v-else>Hide detailed values</span>
-                    </Button>
-                    <div v-if="showDetailedValues">
-                        <p class="mt-2">Damage values:</p>
-                        <ul>
-                            <li v-for="(dmgVal, key) in damageValues" :key="key"
-                                class="flex items-center justify-between text-muted-foreground group">
-                                {{ dmgVal }}
-                                <Icon @click="$.emit('remove:damageValue', key)" icon="radix-icons:cross-2"
-                                    class="hidden group-hover:inline-flex text-neutral-600 hover:text-neutral-100 cursor-pointer" />
-                            </li>
-                        </ul>
+                    <p class="mt-2">Damage values:</p>
+                    <ul>
+                        <li v-for="(dmgVal, key) in damageValues" :key="key"
+                            class="flex items-center justify-between text-muted-foreground group">
+                            {{ dmgVal }}
+                            <Icon @click="$.emit('remove:damageValue', key)" icon="radix-icons:cross-2"
+                                class="hidden group-hover:inline-flex text-neutral-600 hover:text-neutral-100 cursor-pointer" />
+                        </li>
+                    </ul>
 
-                        <div class="flex gap-2 mt-2">
-                            <Input v-model="newDamageValue" type="number" placeholder="Add new value" />
-                            <Button @click="$.emit('add:damageValue', newDamageValue)">
-                                <Icon icon="radix-icons:plus" lass="h-[1rem] w-[1rem]" />
-                            </Button>
-                        </div>
+                    <div class="flex gap-2 mt-2">
+                        <Input v-model="newDamageValue" type="number" placeholder="Add new value" />
+                        <Button @click="$.emit('add:damageValue', newDamageValue)">
+                            <Icon icon="radix-icons:plus" lass="h-[1rem] w-[1rem]" />
+                        </Button>
                     </div>
                 </template>
             </TooltipContent>
@@ -67,7 +59,7 @@ const props = defineProps({
     totalMitigation: Number
 })
 
-const showDetailedValues = ref(false);
+const showDetailedValues = inject('showDetailedDamageValues', false)
 const newDamageValue = ref(0);
 
 const damageThreshold = inject('damage-threshold', 0)
