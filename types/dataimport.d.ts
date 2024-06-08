@@ -1,5 +1,5 @@
 interface ImportedData {
-    timestamp: string,
+    timestamp: number,
     source: string[],
     event: string,
     target: string,

@@ -105,7 +105,7 @@ const doParse = () => {
         const timeline = [] as TimelineEvent[];
         for (const row of mergedData) {
             timeline.push({
-                time: getFFlogsTimeInSeconds(row.timestamp),
+                time: getTimeInSeconds(row.timestamp),
                 source: row.source.length > 1 ? `Multiple sources` : row.source[0],
                 sourceCount: row.source.length,
                 ability: {
@@ -142,7 +142,7 @@ function getBetterCsvData(allLines: string[]) {
         const eventStart = line.indexOf('"', timeEnd + 1);
         const eventEnd = line.indexOf('"', eventStart + 1);
 
-        cur.timestamp = line.substring(timeStart + 1, timeEnd);
+        cur.timestamp = getFFlogsTimeinMilliseconds(line.substring(timeStart + 1, timeEnd));
         event = line.substring(eventStart + 1, eventEnd);
 
         // Find source, event, target
@@ -187,13 +187,20 @@ function getBetterCsvData(allLines: string[]) {
     return listOfEvents
 }
 
-const getFFlogsTimeInSeconds = (time: string) => {
+const getFFlogsTimeinMilliseconds = (time: string) => {
     const timeFormat = /^\d{2}:\d{2}\.\d{3}$/;
     if (timeFormat.test(time)) {
         const [minutes, rest] = time.split(":");
         const [seconds, milliseconds] = rest.split(".");
+        const ms = Number(minutes) * 60000 + Number(seconds) * 1000 + Number(milliseconds);
+        return Math.round(ms / 10) * 10;
+    }
+    return -1;
+}
 
-        return Math.round(Number(minutes) * 60 + Number(seconds) + Number(milliseconds) / 1000) + timeOffset.value;
+const getTimeInSeconds = (timestamp: number) => {
+    if (timestamp >= 0) {
+        return Math.round(timestamp / 1000) + timeOffset.value;
     }
     return -1;
 }
