@@ -21,6 +21,8 @@
 
             <Label for="new-ability-title">Title</Label>
             <Input id="new-ability-title" v-model="newTitle" />
+            <Label for="new-ability-icon">Icon url</Label>
+            <Input id="new-ability-icon" v-model="newIcon" />
             <div class="grid grid-cols-2 gap-2">
                 <div>
                     <Label for="new-ability-duration">Duration</Label>
@@ -76,6 +78,7 @@ const emit = defineEmits<{
 }>()
 
 const newTitle = ref('');
+const newIcon = ref('');
 const newDuration = ref(0);
 const newCooldown = ref(0);
 const newType = ref('mitigation' as JobAbilityType);
@@ -96,6 +99,7 @@ const toggleSelectedJob = (jobAbbr: JobAbbrevation) => {
 const save = () => {
     const newAbility = {
         title: newTitle.value,
+        icon: newIcon.value,
         cooldown: newCooldown.value,
         duration: newDuration.value,
         type: newType.value
@@ -111,6 +115,7 @@ const save = () => {
 
     // Clear everything
     newTitle.value = '';
+    newIcon.value = '';
     newDuration.value = 0;
     newCooldown.value = 0;
     newType.value = 'mitigation' as JobAbilityType;
