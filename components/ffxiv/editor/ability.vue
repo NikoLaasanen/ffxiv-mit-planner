@@ -33,20 +33,29 @@
                     <Input type="number" id="new-ability-cooldown" v-model="newCooldown" />
                 </div>
             </div>
-            <Label for="new-ability-type">Type</Label>
-            <Select id="new-ability-type" v-model="newType">
-                <SelectTrigger>
-                    <SelectValue placeholder="Select ability type" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem value="mitigation">Mitigation</SelectItem>
-                        <SelectItem value="utility">Utility</SelectItem>
-                        <SelectItem value="interrupt">Interrupt</SelectItem>
-                        <SelectItem value="buff">Buff</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <Label for="new-ability-type">Type</Label>
+                    <Select id="new-ability-type" v-model="newType">
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select ability type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="mitigation">Mitigation</SelectItem>
+                                <SelectItem value="utility">Utility</SelectItem>
+                                <SelectItem value="interrupt">Interrupt</SelectItem>
+                                <SelectItem value="buff">Buff</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div class="grid gap-2">
+                    <Label for="new-ability-target" class="self-center font-normal">Single target</Label>
+                    <Checkbox id="new-ability-target" :checked="newSingleTarget"
+                        @click="newSingleTarget = !newSingleTarget" />
+                </div>
+            </div>
             <div v-if="newType === 'mitigation'" class="grid grid-cols-2 gap-2">
                 <p class="col-span-2">Set potencies</p>
                 <div>
@@ -81,6 +90,7 @@ const newTitle = ref('');
 const newIcon = ref('');
 const newDuration = ref(0);
 const newCooldown = ref(0);
+const newSingleTarget = ref(false);
 const newType = ref('mitigation' as JobAbilityType);
 const newPotency = ref({ physical: 0, magical: 0 })
 
@@ -102,6 +112,7 @@ const save = () => {
         icon: newIcon.value,
         cooldown: newCooldown.value,
         duration: newDuration.value,
+        singletarget: newSingleTarget.value,
         type: newType.value
     } as JobAbility;
     if (newType.value === 'mitigation') {
@@ -118,6 +129,7 @@ const save = () => {
     newIcon.value = '';
     newDuration.value = 0;
     newCooldown.value = 0;
+    newSingleTarget.value = false;
     newType.value = 'mitigation' as JobAbilityType;
     newPotency.value = { physical: 0, magical: 0 };
     selectedJobs.value = [] as JobAbbrevation[];

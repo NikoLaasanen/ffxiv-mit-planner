@@ -24,6 +24,7 @@ interface JobAbility {
     type: JobAbilityType,
     duration: number,
     cooldown: number,
+    singletarget?: boolean,
     icon?: string,
     potency?: JobAbilityPotency
 }

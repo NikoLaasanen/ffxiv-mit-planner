@@ -9,7 +9,7 @@
         <div class="flex flex-wrap gap-2">
             <Button v-for="abilityType in abilityTypes" :key="abilityType"
                 @click="setAbilityVisibilityByType(abilityType, false)">
-                {{ abilityType.charAt(0).toUpperCase() + abilityType.slice(1) }}
+                {{ abilityType?.charAt(0).toUpperCase() + abilityType.slice(1) }}
             </Button>
             <Button variant="destructive" @click="preferencesStore.clearJobAbilityVisibilites()">Clear
                 visiblities</Button>

@@ -9,6 +9,8 @@ export const usePreferencesStore = defineStore('preferences', {
         showAbilityTypeUtility: ref(true),
         showAbilityTypeInterrupt: ref(false),
         showAbilityTypeBuff: ref(false),
+        showParty: ref(true),
+        showSingle: ref(false),
         jobAbilityHidden: ref([] as string[])
     }),
     persist: {
@@ -21,7 +23,9 @@ export const usePreferencesStore = defineStore('preferences', {
                     (ability.type === 'utility' && state.showAbilityTypeUtility) ||
                     (ability.type === 'interrupt' && state.showAbilityTypeInterrupt) ||
                     (ability.type === 'buff' && state.showAbilityTypeBuff)) &&
-                !state.jobAbilityHidden.includes(ability.title)
+                !state.jobAbilityHidden.includes(ability.title) &&
+                ((state.showParty && !(ability.singletarget ?? false)) ||
+                    (state.showSingle && (ability.singletarget ?? false)))
         },
         isAbilityInHiddens: (state) => {
             return (ability: JobAbility) => state.jobAbilityHidden.includes(ability.title)

@@ -35,6 +35,18 @@
                     </div>
                     <div class="col-span-3 flex flex-col gap-2">
                         <Separator />
+                        <p class="text-xs font-medium text-muted-foreground">Show abilities by target:</p>
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Party</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showParty" @click="showParty = !showParty" />
+                    </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-autos" class="self-center font-normal">Single target</Label>
+                        <Checkbox id="preferences-show-autos" :checked="showSingle" @click="showSingle = !showSingle" />
+                    </div>
+                    <div class="col-span-3 flex flex-col gap-2">
+                        <Separator />
                         <p class="text-xs font-medium text-muted-foreground">Show ability type on timeline:</p>
                     </div>
                     <div class="grid grid-cols-subgrid col-span-2 items-center">
@@ -72,6 +84,8 @@ const {
     showAutoAttacks,
     showMedianDamage,
     activationBuffer,
+    showParty,
+    showSingle,
     showAbilityTypeMitigation,
     showAbilityTypeUtility,
     showAbilityTypeInterrupt,
