@@ -10,7 +10,7 @@
                 corner.</p>
 
             <ul v-if="favorites.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <li v-for="fav in favorites.reverse()" :key="fav.id" class="flex gap-1">
+                <li v-for="fav in favoritesSorted" :key="fav.id" class="flex gap-1">
                     <Button class="grow" as-child>
                         <NuxtLink :to="'/plan/' + fav.id">{{ fav.title }}</NuxtLink>
                     </Button>
@@ -30,7 +30,7 @@
             <Separator />
             <p class="text-muted-foreground my-2">Here are all the plans created by you</p>
             <ul v-if="latest.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <li v-for="fav in latest.reverse()" :key="fav.id" class="flex gap-1">
+                <li v-for="fav in latestSorted" :key="fav.id" class="flex gap-1">
                     <Button class="grow" as-child>
                         <NuxtLink :to="'/plan/' + fav.id">{{ fav.title }}</NuxtLink>
                     </Button>
@@ -54,6 +54,9 @@ import { storeToRefs } from 'pinia'
 
 const myPlansStore = useMyPlansStore();
 const { favorites, latest } = storeToRefs(myPlansStore)
+
+const favoritesSorted = computed(() => favorites.value.reverse())
+const latestSorted = computed(() => latest.value.reverse())
 
 useSeoMeta({
     title: 'My plans - FFXIV mitigation planner'
