@@ -14,8 +14,9 @@
             <Button variant="destructive" @click="preferencesStore.clearJobAbilityVisibilites()">Clear
                 visiblities</Button>
         </div>
-        <FfxivEditorAbility
-            @new-ability="(newAbility, targetJobs) => addNewAbility(undefined, newAbility, targetJobs)" />
+        <!--
+        <FfxivEditorAbility @new-ability="(newAbility, targetJobs) => addNewAbility(undefined, newAbility, targetJobs)" />
+        -->
     </div>
 
     <div class="mt-4 border rounded p-2 bg-muted">
