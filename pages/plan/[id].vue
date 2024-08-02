@@ -44,7 +44,7 @@
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger as-child>
-                        <Button @click="dialogAddSingleEventOpen = true" variant="outline">
+                        <Button @click="dialogImportFflogsOpen = true" variant="outline">
                             <Icon icon="radix-icons:file-text" />
                             <div class="sr-only">Import from FFlogs</div>
                         </Button>
@@ -66,7 +66,7 @@
                 <TimelineEditorEvent @new-event="addNewTimelineEvent" />
             </DialogContent>
         </Dialog>
-        <Dialog v-model:open="dialogAddSingleEventOpen">
+        <Dialog v-model:open="dialogImportFflogsOpen">
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Import from FFlogs</DialogTitle>
