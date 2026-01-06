@@ -100,7 +100,6 @@ const doParse = () => {
             }
             mergedData.push(row);
         }
-        console.log(mergedData)
 
         const timeline = [] as TimelineEvent[];
         for (const row of mergedData) {

@@ -58,7 +58,22 @@
             </CardContent>
         </Card>
 
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+            <CardHeader>
+                <CardTitle>Read an FFlogs encounter</CardTitle>
+                <CardDescription>Write your FFlogs encounter url with the fight ID.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <TimelineEditorFflogsUrl
+                    @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
+                <p class="text-gray-500 mt-3 text-right text-sm">You can also import from CSV logs using the <span
+                        class="underline cursor-pointer" @click="showLegacyImports = !showLegacyImports">legacy
+                        import</span>
+                </p>
+            </CardContent>
+        </Card>
+
+        <div v-if="showLegacyImports" class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
                 <CardHeader>
                     <CardTitle>Edit timeline</CardTitle>
@@ -86,12 +101,14 @@
                 <CardContent>
                     <div class="flex flex-col gap-4">
                         <Separator />
-                        <TimelineEditorFflog default-adding-method="hide"
+                        <TimelineEditorFflogsCsv default-adding-method="hide"
                             @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
                     </div>
                 </CardContent>
             </Card>
         </div>
+
+        <p class="text-sm text-gray-500 text-right">Last updated: 6.1.2026</p>
     </div>
 </template>
 
@@ -125,6 +142,7 @@ provide(JobKey, jobs);
 
 const shownLatest = computed(() => myLatest.value.slice(-5).reverse());
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
+const showLegacyImports = ref(false)
 
 const loadTimeline = (newTimeline: Timeline) => {
     const hasPreviousTimeline = plan.value.timeline.events.length > 0;
