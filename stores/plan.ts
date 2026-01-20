@@ -56,6 +56,7 @@ export const usePlanStore = defineStore('plan', {
         },
         setActiveAbilities(activations: ActiveAbility[]) {
             this.plan.activeAbilities = activations;
+            this._normalizeAbilityTimes();
         },
         toggleActiveAbility(activation: ActiveAbility) {
             if (!this.isAbilityActivated(activation)) {
@@ -88,6 +89,14 @@ export const usePlanStore = defineStore('plan', {
         removeTimelineEventDamageValue(timelineEvent: TimelineEvent, removedKey: number) {
             const { removeDamageValue } = useTimeline();
             removeDamageValue(this.plan.timeline, timelineEvent, removedKey);
+        },
+        _normalizeAbilityTimes() {
+            this.plan.activeAbilities.forEach(activation => {
+                const closestEvent = this.plan.timeline.events.reduce((prev, curr) => {
+                    return (Math.abs(curr.time - activation.time) < Math.abs(prev.time - activation.time) ? curr : prev);
+                });
+                activation.time = closestEvent.time;
+            });
         }
     }
 })

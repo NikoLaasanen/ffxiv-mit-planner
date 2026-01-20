@@ -118,7 +118,7 @@ import { useToast } from '@/components/ui/toast/use-toast'
 import { usePlanStore } from '@/stores/plan'
 import { storeToRefs } from 'pinia'
 import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
-import { JobKey } from '~/injectionkeys'
+import { JobKey, JobAbilityKey } from '~/injectionkeys'
 
 const { toast } = useToast()
 
@@ -139,6 +139,9 @@ const jobAbilityRef = collection(db, 'jobability');
 // Load and provide job data
 const jobs = useCollection<Job>(jobRef);
 provide(JobKey, jobs);
+// Load and provide job ability data
+const jobAbilities = useCollection<JobAbility>(jobAbilityRef);
+provide(JobAbilityKey, jobAbilities);
 
 const shownLatest = computed(() => myLatest.value.slice(-5).reverse());
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
@@ -157,10 +160,11 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     plan.value.timeline.title = 'Custom timeline';
 }
 
-const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[]) => {
+const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[]) => {
     fflogsUrl.value = newUrl;
     planStore.setTimelineEvents(timelineEvents)
     planStore.setJobs(players);
+    planStore.setActiveAbilities(activeAbilities);
 }
 
 const {
