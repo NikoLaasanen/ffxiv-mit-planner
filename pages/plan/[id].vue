@@ -125,7 +125,18 @@ const planSource = computed(() =>
     doc(planRef, String(route.params.id))
 )
 
-const { data: plan, pending } = useDocument<Plan>(planSource);
+const { data: dbPlan, pending } = useDocument<Plan>(planSource);
+const plan = computed(() => {
+    if (!dbPlan.value) {
+        return null;
+    }
+    // Remove activeAbilities with null Ability
+    const filteredActiveAbilities = dbPlan.value.activeAbilities.filter(ActiveAbility => ActiveAbility.ability !== null);
+    return {
+        ...dbPlan.value,
+        activeAbilities: filteredActiveAbilities
+    } as Plan;
+});
 
 const toggleAbility = (activation: ActiveAbility) => {
     if (plan.value) {
