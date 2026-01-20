@@ -18,7 +18,7 @@
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities"
+                    <Plan :timeline="plan.timeline" :active-abilities="plan.activeAbilities" :active-jobs="plan.jobs"
                         @change:activeAbility="activation => planStore.toggleActiveAbility(activation)"
                         @change:rowVisibility="timelineEvent => planStore.toggleEventVisiblity(timelineEvent)"
                         @change:damageType="(timelineEvent, newType) => planStore.setEventDamageType(timelineEvent, newType)"
@@ -64,7 +64,7 @@
                 <CardDescription>Write your FFlogs encounter url with the fight ID.</CardDescription>
             </CardHeader>
             <CardContent>
-                <TimelineEditorFflogsUrl @new-timeline="handleFFlogsImport" />
+                <TimelineEditorFflogsUrl @url-parsed="handleFFlogsImport" />
                 <p class="text-gray-500 mt-3 text-right text-sm">You can also import from CSV logs using the <span
                         class="underline cursor-pointer" @click="showLegacyImports = !showLegacyImports">legacy
                         import</span>
@@ -107,7 +107,7 @@
             </Card>
         </div>
 
-        <p class="text-sm text-gray-500 text-right">Last updated: 6.1.2026</p>
+        <p class="text-sm text-gray-500 text-right">Last updated: 20.1.2026</p>
     </div>
 </template>
 
@@ -157,9 +157,10 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     plan.value.timeline.title = 'Custom timeline';
 }
 
-const handleFFlogsImport = (timelineEvents: TimelineEvent[], newUrl: string) => {
-    planStore.setTimelineEvents(timelineEvents)
+const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[]) => {
     fflogsUrl.value = newUrl;
+    planStore.setTimelineEvents(timelineEvents)
+    planStore.setJobs(players);
 }
 
 const {
@@ -199,6 +200,17 @@ const {
 
 useSeoMeta({
     title: 'FFXIV mitigation planner'
+})
+
+useHead({
+    link: [
+        {
+            rel: 'preload',
+            as: 'image',
+            href: '/bg.webp',
+            fetchpriority: 'high'
+        }
+    ]
 })
 </script>
 

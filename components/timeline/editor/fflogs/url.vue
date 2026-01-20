@@ -6,16 +6,22 @@
         <Button type="button" class="ml-auto w-full sm:w-auto" :disabled="!isValidUrl"
             @click.prevent="fetchLog">Go</Button>
     </div>
+    <div class="flex gap-2 mt-2">
+        <Checkbox id="load-player-events" :checked="loadPlayerEvents" @click="loadPlayerEvents = !loadPlayerEvents" />
+        <Label for="load-player-events" class="self-center font-normal">Load player events</Label>
+    </div>
 </template>
 
 <script lang="ts" setup>
 import { useDebounceFn } from '@vueuse/core';
+import { fetchTimelineEvents } from '~/composables/useFFlogs'
 
 const emit = defineEmits<{
-    (e: 'newTimeline', timelineEvents: TimelineEvent[], url: string): void
+    (e: 'urlParsed', url: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[]): void
 }>()
 
 const url = ref('')
+const loadPlayerEvents = ref(false)
 
 const reportId = ref('');
 const fightId = ref(0);
@@ -50,7 +56,7 @@ const readUrl = useDebounceFn(() => {
 const fetchLog = async () => {
     let report;
     try {
-        const response = await fetchEvents(reportId.value, fightId.value);
+        const response = await fetchTimelineEvents(reportId.value, fightId.value);
         report = response?.data?.reportData.report;
 
         previousReport.value = reportId.value;
@@ -69,11 +75,15 @@ const fetchLog = async () => {
         // Set events
         events.value = report?.events?.data ?? [];
 
-        parseData()
+        const timeline = parseTimelineData();
+        const players = parseActiveJobs();
+        if (timeline.length > 0) {
+            emit('urlParsed', url.value, timeline, players);
+        }
     }
 }
 
-const parseData = () => {
+const parseTimelineData = (): TimelineEvent[] => {
     const timeline = [] as TimelineEvent[];
     let firstEventTimestamp = -1;
     for (const event of events.value) {
@@ -108,12 +118,49 @@ const parseData = () => {
                 } as TimelineEvent);
             }
         }
-
-        if (timeline.length > 0) {
-            emit('newTimeline', timeline, url.value);
-        }
     }
+    return timeline;
 }
+
+const parseActiveJobs = (): JobAbbrevation[] => {
+    const jobs: JobAbbrevation[] = [];
+    if (loadPlayerEvents.value) {
+        actorMap.value.forEach(actor => {
+            if (actor.type === 'Player' && actor.subType != 'Unknown') {
+                const jobAbbr = fflogsJobMap[actor.subType as string];
+                if (jobAbbr && !jobs.includes(jobAbbr)) {
+                    jobs.push(jobAbbr);
+                }
+            }
+        });
+    }
+    return jobs;
+}
+
+const fflogsJobMap: Record<string, JobAbbrevation> = {
+    'Paladin': 'PLD' as TankAbbr,
+    'Warrior': 'WAR' as TankAbbr,
+    'DarkKnight': 'DRK' as TankAbbr,
+    'Gunbreaker': 'GNB' as TankAbbr,
+    'WhiteMage': 'WHM' as HealerAbbr,
+    'Scholar': 'SCH' as HealerAbbr,
+    'Astrologian': 'AST' as HealerAbbr,
+    'Sage': 'SGE' as HealerAbbr,
+    'Monk': 'MNK' as MeleeDpsAbbr,
+    'Dragoon': 'DRG' as MeleeDpsAbbr,
+    'Ninja': 'NIN' as MeleeDpsAbbr,
+    'Samurai': 'SAM' as MeleeDpsAbbr,
+    'Reaper': 'RPR' as MeleeDpsAbbr,
+    'Viper': 'VPR' as MeleeDpsAbbr,
+    'BlackMage': 'BLM' as CasterDpsAbbr,
+    'Summoner': 'SMN' as CasterDpsAbbr,
+    'RedMage': 'RDM' as CasterDpsAbbr,
+    'Pictomancer': 'PCT' as CasterDpsAbbr,
+    'Bard': 'BRD' as RangedDpsAbbr,
+    'Machinist': 'MCH' as RangedDpsAbbr,
+    'Dancer': 'DNC' as RangedDpsAbbr,
+    'LimitBreak': 'LB' as MiscOptionsAbbr // Special case for Limit Breaks
+};
 
 const getTimeInSeconds = (timestamp: number) => {
     if (timestamp >= 0) {

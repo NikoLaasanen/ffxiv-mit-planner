@@ -51,6 +51,9 @@ export const usePlanStore = defineStore('plan', {
             })
             toast({ description: 'Event added' });
         },
+        setJobs(jobs: JobAbbrevation[]) {
+            this.plan.jobs = jobs;
+        },
         setActiveAbilities(activations: ActiveAbility[]) {
             this.plan.activeAbilities = activations;
         },

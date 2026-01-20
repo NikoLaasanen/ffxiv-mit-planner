@@ -1,4 +1,4 @@
-export async function fetchEvents(reportCode: string, fightId: number, start = 0) {
+export async function fetchTimelineEvents(reportCode: string, fightId: number, start = 0) {
     const query = `
     {
         reportData {

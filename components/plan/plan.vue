@@ -72,7 +72,8 @@ const emit = defineEmits<{
 
 const props = defineProps({
     timeline: Object as PropType<Timeline>,
-    activeAbilities: Array as PropType<ActiveAbility[]>
+    activeAbilities: Array as PropType<ActiveAbility[]>,
+    activeJobs: Array as PropType<JobAbbrevation[]>
 })
 
 const preferencesStore = usePreferencesStore();
@@ -109,6 +110,12 @@ const getJob = (jobAbbr: JobAbbrevation) => jobs?.value.find(job => job.abbr ===
 onMounted(() => {
     // Set active jobs based on initial load
     activeJobs.value = [...new Set(props.activeAbilities?.map(item => item.source))];
+    // Add other preselected jobs
+    props.activeJobs?.forEach(jobAbbr => {
+        if (!activeJobs.value.includes(jobAbbr)) {
+            activeJobs.value.push(jobAbbr)
+        }
+    })
 })
 
 const fixedColumnCount = ref(2);
