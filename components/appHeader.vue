@@ -6,7 +6,6 @@
                 <span class="title">FFXIV mitigation planner</span>
             </NuxtLink>
             <div class="flex gap-2">
-
                 <Button variant="ghost" as-child>
                     <NuxtLink :to="'/jobs'">
                         <div class="icon">
@@ -26,35 +25,6 @@
 
                 <Preferences />
                 <ThemeSelector />
-
-                <!--
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Button variant="ghost">
-                            <Icon icon="radix-icons:hamburger-menu" class="h-[1.2rem] w-[1.2rem]" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem>
-                            <NuxtLink :to="'/jobs'" class="flex gap-2 w-full">
-                                <Icon icon="radix-icons:person" class="h-[1.2rem] w-[1.2rem]" /> Jobs & abilities
-                            </NuxtLink>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <NuxtLink :to="'/favorites'" class="flex gap-2 w-full">
-                                <Icon icon="radix-icons:heart" class="h-[1.2rem] w-[1.2rem]" /> Favorites
-                            </NuxtLink>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <NuxtLink :to="'https://github.com/NikoLaasanen/ffxiv-mit-planner'" target="_blank"
-                                class="flex gap-2 w-full">
-                                <Icon icon="radix-icons:github-logo" class="h-[1.2rem] w-[1.2rem]" /> Github
-                            </NuxtLink>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                -->
             </div>
         </div>
     </header>

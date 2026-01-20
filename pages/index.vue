@@ -64,8 +64,7 @@
                 <CardDescription>Write your FFlogs encounter url with the fight ID.</CardDescription>
             </CardHeader>
             <CardContent>
-                <TimelineEditorFflogsUrl
-                    @new-timeline="timelineEvents => planStore.setTimelineEvents(timelineEvents)" />
+                <TimelineEditorFflogsUrl @new-timeline="handleFFlogsImport" />
                 <p class="text-gray-500 mt-3 text-right text-sm">You can also import from CSV logs using the <span
                         class="underline cursor-pointer" @click="showLegacyImports = !showLegacyImports">legacy
                         import</span>
@@ -129,6 +128,7 @@ const myPlansStore = useMyPlansStore();
 const { latest: myLatest } = storeToRefs(myPlansStore);
 const { plan } = storeToRefs(planStore)
 const planTitle = ref('My Awesome Plan');
+const fflogsUrl = ref('');
 
 // Create db refs
 const db = useFirestore();
@@ -157,6 +157,11 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     plan.value.timeline.title = 'Custom timeline';
 }
 
+const handleFFlogsImport = (timelineEvents: TimelineEvent[], newUrl: string) => {
+    planStore.setTimelineEvents(timelineEvents)
+    fflogsUrl.value = newUrl;
+}
+
 const {
     execute: savePlan,
     isLoading: isSavingPlan
@@ -177,6 +182,7 @@ const {
                 newData.ability = doc(jobAbilityRef, obj.ability.title.toLowerCase().replace(/ /g, '_'))
                 return newData;
             }),
+            fflogsUrl: fflogsUrl.value,
             createdAt: serverTimestamp()
         }).then((newPlan) => {
             toast({ description: 'Plan saved' });

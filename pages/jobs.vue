@@ -5,7 +5,7 @@
 
     <div class="flex flex-col gap-2">
         <p>You can manage ability visibility per ability basis by clicking the hide checkbox in the ability card.</p>
-        <p>Change visibility by ability type:</p>
+        <p>Hide visibility by ability type:</p>
         <div class="flex flex-wrap gap-2">
             <Button v-for="abilityType in abilityTypes" :key="abilityType"
                 @click="setAbilityVisibilityByType(abilityType, false)">

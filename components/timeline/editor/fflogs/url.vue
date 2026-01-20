@@ -12,7 +12,7 @@
 import { useDebounceFn } from '@vueuse/core';
 
 const emit = defineEmits<{
-    (e: 'newTimeline', timelineEvents: TimelineEvent[]): void
+    (e: 'newTimeline', timelineEvents: TimelineEvent[], url: string): void
 }>()
 
 const url = ref('')
@@ -110,7 +110,7 @@ const parseData = () => {
         }
 
         if (timeline.length > 0) {
-            emit('newTimeline', timeline);
+            emit('newTimeline', timeline, url.value);
         }
     }
 }

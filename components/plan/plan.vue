@@ -88,9 +88,10 @@ const activeJobs = ref([] as JobAbbrevation[]);
 provide(ActiveJobsKey, activeJobs);
 
 const timelineEvents = computed(() => {
+    const autoAttackTitles = ['attack', 'Attack'];
     return props.timeline?.events.filter(item =>
         // Check preference for showing auto attacks        
-        (showAutoAttacks.value || (!showAutoAttacks.value && item.ability.title !== 'attack')) &&
+        (showAutoAttacks.value || (!showAutoAttacks.value && !autoAttackTitles.includes(item.ability.title))) &&
         ((item?.visible ?? true) || showHiddenRows.value)
     )
 })
