@@ -51,6 +51,9 @@
             </span>
         </div>
         <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1">
+            <template v-if="showColMistakes">
+                <PlanRowMistake :time="rowTime" :owner="jobAbbr" />
+            </template>
             <template v-for="ability in getJob(jobAbbr)?.abilities ?? []">
                 <span v-if="preferencesStore.isAbilityVisible(ability)"
                     class="w-6 h-6 flex items-center justify-center">
@@ -70,7 +73,7 @@ import { storeToRefs } from 'pinia'
 import { JobKey, ActiveJobsKey } from '~/injectionkeys'
 
 const preferencesStore = usePreferencesStore();
-const { showMedianDamage, activationBuffer, showColSource, showColSourceCount } = storeToRefs(preferencesStore);
+const { showMedianDamage, activationBuffer, showColSource, showColSourceCount, showColMistakes } = storeToRefs(preferencesStore);
 
 const emit = defineEmits<{
     (e: 'change:activeAbility', activeAbility: ActiveAbility): void,

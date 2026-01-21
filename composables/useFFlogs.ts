@@ -1,20 +1,37 @@
-export async function fetchTimelineEvents(reportCode: string, fightId: number, start = 0) {
-    const query = `
-    {
-        reportData {
-        report(code: "${reportCode}") {
-            masterData { 
-                actors { id name type subType }
-                abilities { gameID name type icon } 
-            }
+async function fetchFFLogsData(
+    reportCode: string,
+    fightId: number,
+    dataType: string,
+    start = 0,
+    includeMasterData = false
+) {
+    let eventsQuery = `
             events(
                 fightIDs: [${fightId}]
                 startTime: ${start},
-                dataType: DamageTaken
+                dataType: ${dataType}
             ) {
                 data
                 nextPageTimestamp
             }
+    `
+
+    let masterDataQuery = ''
+    if (includeMasterData) {
+        masterDataQuery = `
+            masterData { 
+                actors { id name type subType }
+                abilities { gameID name type icon } 
+            }
+        `
+    }
+
+    const query = `
+    {
+        reportData {
+        report(code: "${reportCode}") {
+            ${masterDataQuery}
+            ${eventsQuery}
         }
         }
     }
@@ -26,26 +43,14 @@ export async function fetchTimelineEvents(reportCode: string, fightId: number, s
     })
 }
 
-export async function fetchActiveAbilities(reportCode: string, fightId: number, start = 0) {
-    const query = `
-    {
-        reportData {
-        report(code: "${reportCode}") {
-            events(
-                fightIDs: [${fightId}]
-                startTime: ${start},
-                dataType: Casts
-            ) {
-                data
-                nextPageTimestamp
-            }
-        }
-        }
-    }
-    `
+export async function fetchTimelineEvents(reportCode: string, fightId: number, start = 0) {
+    return fetchFFLogsData(reportCode, fightId, 'DamageTaken', start, true)
+}
 
-    return await $fetch('/api/fflogs', {
-        method: 'POST',
-        body: { query }
-    })
+export async function fetchActiveAbilities(reportCode: string, fightId: number, start = 0) {
+    return fetchFFLogsData(reportCode, fightId, 'Casts', start)
+}
+
+export async function fetchPlayerDebuffs(reportCode: string, fightId: number, start = 0) {
+    return fetchFFLogsData(reportCode, fightId, 'Debuffs', start)
 }

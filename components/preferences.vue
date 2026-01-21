@@ -87,6 +87,11 @@
                         <Checkbox id="preferences-show-col-source-count" :checked="showColSourceCount"
                             @click="showColSourceCount = !showColSourceCount" />
                     </div>
+                    <div class="grid grid-cols-subgrid col-span-2 items-center">
+                        <Label for="preferences-show-col-source-count" class="self-center font-normal">Mistakes</Label>
+                        <Checkbox id="preferences-show-col-source-count" :checked="showColMistakes"
+                            @click="showColMistakes = !showColMistakes" />
+                    </div>
                 </div>
             </div>
         </PopoverContent>
@@ -109,6 +114,7 @@ const {
     showAbilityTypeInterrupt,
     showAbilityTypeBuff,
     showColSource,
-    showColSourceCount
+    showColSourceCount,
+    showColMistakes
 } = storeToRefs(preferencesStore);
 </script>

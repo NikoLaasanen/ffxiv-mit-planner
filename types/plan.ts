@@ -10,3 +10,12 @@ interface ActiveAbility {
     source: JobAbbrevation,
     ability: JobAbility
 }
+
+type MistakeType = 'Weakness' | 'Brink of Death' | 'Damage Down';
+
+interface PlayerMistake {
+    type: MistakeType,
+    source: JobAbbrevation,
+    timestamp: number,
+    duration: number
+}

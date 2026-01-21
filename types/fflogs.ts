@@ -21,6 +21,7 @@ type fflogs_event = {
     type: String,
     packetId?: number,
     sourceID: number,
+    sourceInstance?: number,
     targetID: number,
     abilityGameID: number,
     fight: number,

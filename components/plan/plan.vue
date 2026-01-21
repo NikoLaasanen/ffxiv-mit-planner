@@ -14,6 +14,9 @@
                 <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1 flex-col items-center">
                     <FfxivIcon :icon-data="getJob(jobAbbr)" />
                     <div class="flex gap-1">
+                        <template v-if="showColMistakes">
+                            <PlanColMistakeInfo :owner="jobAbbr" />
+                        </template>
                         <template v-for="ability in getJob(jobAbbr)?.abilities" :for="ability.title">
                             <FfxivIcon v-if="preferencesStore.isAbilityVisible(ability)" :icon-data="ability" />
                         </template>
@@ -77,7 +80,7 @@ const props = defineProps({
 })
 
 const preferencesStore = usePreferencesStore();
-const { showAutoAttacks, showMedianDamage, showColSource, showColSourceCount } = storeToRefs(preferencesStore);
+const { showAutoAttacks, showMedianDamage, showColSource, showColSourceCount, showColMistakes } = storeToRefs(preferencesStore);
 const showHiddenRows = ref(false);
 const showDetailedDamageValues = ref(false);
 provide('showDetailedDamageValues', showDetailedDamageValues);

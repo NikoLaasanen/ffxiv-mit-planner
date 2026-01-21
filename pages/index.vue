@@ -36,6 +36,11 @@
                 </Button>
                 <PlanClearButton @clear="planStore.clearPlan" :disabled="!canSave || isSavingPlan" />
             </div>
+            <div v-if="showColMistakes">
+                Looks like you have enabled showing player mistakes in the timeline. Note that player mistakes are not
+                saved with
+                the plan. You can view them only during the current session.
+            </div>
         </template>
         <Card v-else>
             <CardContent class="p-6 bg-ffimage rounded">
@@ -107,7 +112,7 @@
             </Card>
         </div>
 
-        <p class="text-sm text-gray-500 text-right">Last updated: 20.1.2026</p>
+        <p class="text-sm text-gray-500 text-right">Last updated: 21.1.2026</p>
     </div>
 </template>
 
@@ -143,6 +148,9 @@ provide(JobKey, jobs);
 const jobAbilities = useCollection<JobAbility>(jobAbilityRef);
 provide(JobAbilityKey, jobAbilities);
 
+const preferencesStore = usePreferencesStore();
+const { showColMistakes } = storeToRefs(preferencesStore);
+
 const shownLatest = computed(() => myLatest.value.slice(-5).reverse());
 const canSave = computed(() => (plan.value.timeline?.events?.length ?? 0) > 0 && (plan.value.activeAbilities?.length ?? 0) > 0)
 const showLegacyImports = ref(false)
@@ -160,11 +168,12 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     plan.value.timeline.title = 'Custom timeline';
 }
 
-const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[]) => {
+const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]) => {
     fflogsUrl.value = newUrl;
     planStore.setTimelineEvents(timelineEvents)
     planStore.setJobs(players);
     planStore.setActiveAbilities(activeAbilities);
+    planStore.setMistakes(mistakes);
 }
 
 const {

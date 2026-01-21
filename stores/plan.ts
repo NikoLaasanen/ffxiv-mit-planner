@@ -12,7 +12,8 @@ export const usePlanStore = defineStore('plan', {
             } as Timeline,
             activeAbilities: [] as ActiveAbility[],
             jobs: [] as JobAbbrevation[]
-        } as Plan)
+        } as Plan),
+        mistakes: ref([] as PlayerMistake[])
     }),
     getters: {
         isAbilityActivated: (state) => {
@@ -32,14 +33,17 @@ export const usePlanStore = defineStore('plan', {
                 activeAbilities: [] as ActiveAbility[],
                 jobs: [] as JobAbbrevation[]
             };
+            this.mistakes = [];
         },
         setTimeline(newTimeline: Timeline) {
             this.plan.timeline = newTimeline;
             this.plan.activeAbilities = [];
+            this.mistakes = [];
         },
         setTimelineEvents(events: TimelineEvent[]) {
             this.plan.timeline.events = events;
             this.plan.activeAbilities = [];
+            this.mistakes = [];
         },
         addTimelineEvent(event: TimelineEvent) {
             const { toast } = useToast()
@@ -90,12 +94,19 @@ export const usePlanStore = defineStore('plan', {
             const { removeDamageValue } = useTimeline();
             removeDamageValue(this.plan.timeline, timelineEvent, removedKey);
         },
+        setMistakes(mistakes: PlayerMistake[]) {
+            this.mistakes = mistakes;
+        },
         _normalizeAbilityTimes() {
+            const THRESHOLD_MS = 2000; // 2 seconds
             this.plan.activeAbilities.forEach(activation => {
                 const closestEvent = this.plan.timeline.events.reduce((prev, curr) => {
                     return (Math.abs(curr.time - activation.time) < Math.abs(prev.time - activation.time) ? curr : prev);
                 });
-                activation.time = closestEvent.time;
+                const distance = Math.abs(closestEvent.time - activation.time);
+                if (distance <= THRESHOLD_MS) {
+                    activation.time = closestEvent.time;
+                }
             });
         }
     }

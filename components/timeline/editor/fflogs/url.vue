@@ -17,7 +17,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { JobAbilityKey } from '~/injectionkeys'
 
 const emit = defineEmits<{
-    (e: 'urlParsed', url: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[]): void
+    (e: 'urlParsed', url: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]): void
 }>()
 
 const url = ref('')
@@ -80,13 +80,15 @@ const fetchLog = async () => {
         const timeline = parseTimelineData(events, firstEventTimestamp);
         let players: JobAbbrevation[] = [];
         let activeAbilities: ActiveAbility[] = [];
+        let mistakes: PlayerMistake[] = [];
         if (loadPlayerEvents.value) {
             players = parseActiveJobs();
             activeAbilities = await loadPlayerAbilities(firstEventTimestamp);
+            mistakes = await loadPlayerMistakes(firstEventTimestamp);
         }
 
         if (timeline.length > 0) {
-            emit('urlParsed', url.value, timeline, players, activeAbilities);
+            emit('urlParsed', url.value, timeline, players, activeAbilities, mistakes);
         }
     }
 }
@@ -108,12 +110,16 @@ const parseTimelineData = (events: fflogs_event[], firstEventTimestamp: number):
         if (event.type === 'damage' && actor && actor.type === 'NPC' && actor.name !== 'Environment') {
             const time = getTimeInSeconds(event.timestamp - firstEventTimestamp);
             const abilityName = abilityMap.value.get(event.abilityGameID)?.name ?? 'Unknown';
+
+            // Skip dots and mechanic punishment events
+            if (abilityName == 'Combined DoTs' || abilityName == 'Unmitigated Explosion') continue;
+
             const damage = event.unmitigatedAmount ?? event.amount ?? 0;
 
             const last = timeline[timeline.length - 1];
 
             // Check if we should merge with the previous entry 
-            const shouldMerge = last && last.source === actor.name && last.ability.title === abilityName && Math.abs(last.time - time) < 0.05; // 50 ms window
+            const shouldMerge = last && last.source === actor.name && last.ability.title === abilityName && Math.abs(last.time - time) < 1; // 1s window
             if (shouldMerge) {
                 last.sourceCount += 1;
                 if (damage > 0) {
@@ -137,25 +143,23 @@ const parseTimelineData = (events: fflogs_event[], firstEventTimestamp: number):
 }
 
 const loadPlayerAbilities = async (firstEventTimestamp: number): Promise<ActiveAbility[]> => {
-    if (loadPlayerEvents.value) {
-        let report;
-        try {
-            const response = await fetchActiveAbilities(reportId.value, fightId.value);
-            report = response?.data?.reportData.report;
-        } catch (e) {
-            console.error('Error fetching player buffs:', e);
-        }
+    let report;
+    try {
+        const response = await fetchActiveAbilities(reportId.value, fightId.value);
+        report = response?.data?.reportData.report;
+    } catch (e) {
+        console.error('Error fetching player buffs:', e);
+    }
 
-        if (report) {
-            const events = (report?.events?.data ?? []) as fflogs_event[];
-            const activeAbilities = parseActiveAbilitydata(events, firstEventTimestamp);
-            return activeAbilities;
-        }
+    if (report) {
+        const events = (report?.events?.data ?? []) as fflogs_event[];
+        const activeAbilities = parseActiveAbilityData(events, firstEventTimestamp);
+        return activeAbilities;
     }
     return [];
 }
 
-const parseActiveAbilitydata = (events: fflogs_event[], firstEventTimestamp: number): ActiveAbility[] => {
+const parseActiveAbilityData = (events: fflogs_event[], firstEventTimestamp: number): ActiveAbility[] => {
     const activeAbilities: ActiveAbility[] = [];
 
     for (const event of events) {
@@ -187,6 +191,81 @@ const getJobAbilityByName = (name: string): JobAbility | null => {
         }
     }
     return null;
+}
+
+const loadPlayerMistakes = async (firstEventTimestamp: number): Promise<PlayerMistake[]> => {
+    let report;
+    try {
+        const response = await fetchPlayerDebuffs(reportId.value, fightId.value);
+        report = response?.data?.reportData.report;
+    } catch (e) {
+        console.error('Error fetching player debuffs:', e);
+    }
+
+    if (report) {
+        const events = (report?.events?.data ?? []) as fflogs_event[];
+        const mistakes = parseDebuffData(events, firstEventTimestamp);
+        return mistakes;
+    }
+
+    return [];
+}
+
+const parseDebuffData = (events: fflogs_event[], firstEventTimestamp: number): PlayerMistake[] => {
+    const mistakes: PlayerMistake[] = [];
+
+    const tmpMistakes: { mistake: PlayerMistake, sourceInstance: number }[] = [];
+    for (const event of events) {
+        const actor = actorMap.value.get(event.targetID);
+        // Only track death debuffs and damage downs
+        if (actor && actor.type === 'Player' && actor.subType != 'Unknown') {
+            const abilityName = (abilityMap.value.get(event.abilityGameID)?.name ?? 'Unknown') as string;
+            const jobAbbr = fflogsJobMap[actor.subType as string];
+            if (jobAbbr && (abilityName === 'Weakness' || abilityName === 'Brink of Death' || abilityName === 'Damage Down')) {
+                // Add debuff application
+                if (event.type === 'applydebuff') {
+                    tmpMistakes.push({
+                        mistake: {
+                            type: abilityName as MistakeType,
+                            source: jobAbbr,
+                            timestamp: event.timestamp,
+                            duration: 0 // Placeholder for duration
+                        },
+                        sourceInstance: event.sourceInstance ?? 0
+                    });
+                }
+                // Update debuff duration upon removal
+                else if (event.type === 'removedebuff') {
+                    const index = tmpMistakes.findIndex(m =>
+                        m.sourceInstance === (event.sourceInstance ?? 0) &&
+                        m.mistake.type === abilityName &&
+                        m.mistake.source === jobAbbr
+                    );
+                    if (index !== -1) {
+                        const appliedMistake = tmpMistakes[index];
+                        // Calculate duration
+                        appliedMistake.mistake.duration = getTimeInSeconds(event.timestamp - appliedMistake.mistake.timestamp);
+                        // Adjust timestamp relative to first event
+                        appliedMistake.mistake.timestamp = getTimeInSeconds(appliedMistake.mistake.timestamp - firstEventTimestamp);
+                        mistakes.push(appliedMistake.mistake);
+                        tmpMistakes.splice(index, 1); // Remove from temp list
+                    }
+                }
+            }
+        }
+    }
+
+    // Add all mistakes with no removal event (still active at fight end)
+    tmpMistakes.forEach(m => {
+        m.mistake.duration = 600; // 10 minutes as a fallback
+        if (m.mistake.type === 'Weakness' || m.mistake.type === 'Brink of Death') {
+            m.mistake.duration = 100; // 100 seconds for death debuffs
+        }
+        m.mistake.timestamp = getTimeInSeconds(m.mistake.timestamp - firstEventTimestamp);
+        mistakes.push(m.mistake);
+    });
+
+    return mistakes;
 }
 
 const parseActiveJobs = (): JobAbbrevation[] => {
@@ -228,7 +307,7 @@ const fflogsJobMap: Record<string, JobAbbrevation> = {
     'Bard': 'BRD' as RangedDpsAbbr,
     'Machinist': 'MCH' as RangedDpsAbbr,
     'Dancer': 'DNC' as RangedDpsAbbr,
-    'LimitBreak': 'LB' as MiscOptionsAbbr // Special case for Limit Breaks
+    //'LimitBreak': 'LB' as MiscOptionsAbbr // Special case for Limit Breaks
 };
 
 // Sort jobs based on role using JobAbbrevation subtypes
