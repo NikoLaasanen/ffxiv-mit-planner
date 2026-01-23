@@ -122,7 +122,7 @@
             </Card>
         </div>
 
-        <p class="text-sm text-gray-500 text-right">Last updated: 21.1.2026</p>
+        <p class="text-sm text-gray-500 text-right">Last updated: 23.1.2026</p>
     </div>
 </template>
 

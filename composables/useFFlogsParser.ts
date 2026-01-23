@@ -63,11 +63,27 @@ export const useFFlogsParser = (
                         ability: {
                             title: abilityName,
                             damageType: 'magical',
+                            interruptable: false,
                             unmitigatedDamage: damage > 0 ? [event.unmitigatedAmount ?? event.amount] : []
                         } as BossAbility
                     } as TimelineEvent);
                 }
             }
+        }
+        // If we have events, add zero time event at start
+        if (timeline.length > 0 && timeline[0].time > 0) {
+            timeline.unshift({
+                time: 0,
+                source: 'Timeline',
+                sourceCount: 1,
+                ability: {
+                    title: 'Fight start',
+                    damageType: 'magical',
+                    interruptable: false,
+                    unmitigatedDamage: []
+                } as BossAbility,
+                visible: false
+            } as TimelineEvent);
         }
         return timeline;
     };

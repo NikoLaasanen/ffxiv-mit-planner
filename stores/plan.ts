@@ -101,7 +101,8 @@ export const usePlanStore = defineStore('plan', {
         _normalizeAbilityTimes() {
             const THRESHOLD_MS = 2000; // 2 seconds
             this.plan.activeAbilities.forEach(activation => {
-                const closestEvent = this.plan.timeline.events.reduce((prev, curr) => {
+                const nonAttackEvents = this.plan.timeline.events.filter(event => event.ability.title !== 'Attack');
+                const closestEvent = nonAttackEvents.reduce((prev, curr) => {
                     return (Math.abs(curr.time - activation.time) < Math.abs(prev.time - activation.time) ? curr : prev);
                 });
                 const distance = Math.abs(closestEvent.time - activation.time);
