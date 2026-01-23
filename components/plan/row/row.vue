@@ -33,6 +33,10 @@
                 </Tooltip>
             </TooltipProvider>
         </div>
+        <div v-if="showColMistakes">
+            <PlanRowMistakeSummary :time="rowTime" :previous-event-time="previousTimelineEvent?.time"
+                :next-event-time="nextTimelineEvent?.time" />
+        </div>
         <div v-if="showColSource">{{ timelineEvent.source }}</div>
         <div v-if="showColSourceCount" class="text-right">
             <template v-if="timelineEvent.sourceCount > 1">
@@ -52,7 +56,7 @@
         </div>
         <div v-for="(jobAbbr, key) in activeJobs" :key="key" class="flex gap-1">
             <template v-if="showColMistakes">
-                <PlanRowMistake :time="rowTime" :owner="jobAbbr" />
+                <PlanRowMistake :time="rowTime" :next-event-time="nextTimelineEvent?.time" :owner="jobAbbr" />
             </template>
             <template v-for="ability in getJob(jobAbbr)?.abilities ?? []">
                 <span v-if="preferencesStore.isAbilityVisible(ability)"
@@ -85,6 +89,8 @@ const emit = defineEmits<{
 
 const props = defineProps({
     timelineEvent: Object as PropType<TimelineEvent>,
+    previousTimelineEvent: Object as PropType<TimelineEvent | undefined>,
+    nextTimelineEvent: Object as PropType<TimelineEvent | undefined>,
     activeAbilities: Object as PropType<ActiveAbility[]>
 });
 

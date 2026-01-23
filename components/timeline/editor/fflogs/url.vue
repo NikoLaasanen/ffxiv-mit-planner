@@ -43,6 +43,7 @@ const {
     parseTimelineData,
     parseActiveAbilityData,
     parseDebuffData,
+    parseDeathData,
     parseActiveJobs,
 } = useFFlogsParser(actorMap, abilityMap, jobAbilities)
 
@@ -110,6 +111,7 @@ const loadPlayerAbilities = async (firstEventTimestamp: number): Promise<ActiveA
 
 const loadPlayerMistakes = async (firstEventTimestamp: number): Promise<PlayerMistake[]> => {
     let report;
+    let mistakes: PlayerMistake[] = [];
     try {
         const response = await fetchPlayerDebuffs(reportId.value, fightId.value);
         report = response?.data?.reportData.report;
@@ -119,10 +121,23 @@ const loadPlayerMistakes = async (firstEventTimestamp: number): Promise<PlayerMi
 
     if (report) {
         const events = (report?.events?.data ?? []) as fflogs_event[];
-        const mistakes = parseDebuffData(events, firstEventTimestamp);
-        return mistakes;
+        const mistakes_debuff = parseDebuffData(events, firstEventTimestamp);
+        mistakes = mistakes.concat(mistakes_debuff);
     }
 
-    return [];
+    try {
+        const response = await fetchPlayerDeaths(reportId.value, fightId.value);
+        report = response?.data?.reportData.report;
+    } catch (e) {
+        console.error('Error fetching player deaths:', e);
+    }
+
+    if (report) {
+        const events = (report?.events?.data ?? []) as fflogs_event[];
+        const mistakes_death = parseDeathData(events, firstEventTimestamp);
+        mistakes = mistakes.concat(mistakes_death);
+    }
+
+    return mistakes;
 }
 </script>

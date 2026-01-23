@@ -11,7 +11,7 @@ interface ActiveAbility {
     ability: JobAbility
 }
 
-type MistakeType = 'Weakness' | 'Brink of Death' | 'Damage Down';
+type MistakeType = 'Death' | 'Weakness' | 'Brink of Death' | 'Damage Down';
 
 interface PlayerMistake {
     type: MistakeType,

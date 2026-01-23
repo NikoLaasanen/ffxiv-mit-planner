@@ -6,6 +6,7 @@
                     <Icon icon="radix-icons:clock" class="mb-1" />
                 </div>
                 <div class="font-semibold self-end">Cast</div>
+                <div v-if="showColMistakes" class="font-semibold self-end">Mistakes</div>
                 <div v-if="showColSource" class="font-semibold self-end">Source</div>
                 <div v-if="showColSourceCount" class="font-semibold self-end text-right">Source count</div>
                 <div v-if="showMedianDamage" class="font-semibold self-end text-right">Damage taken</div>
@@ -23,8 +24,10 @@
                     </div>
                 </div>
             </div>
-            <PlanRow v-for="(timelineEvent, key) in timelineEvents" :key="key" :timeline-event="timelineEvent"
-                :active-abilities="activeAbilities" :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
+            <PlanRow v-if="timelineEvents" v-for="(timelineEvent, key) in timelineEvents" :key="key"
+                :timeline-event="timelineEvent" :previous-timeline-event="timelineEvents[key - 1]"
+                :next-timeline-event="timelineEvents[key + 1]" :active-abilities="activeAbilities"
+                :class="{ 'text-neutral-600': !(timelineEvent.visible ?? true) }"
                 @change:activeAbility="item => $.emit('change:activeAbility', item)"
                 @change:rowVisibility="$.emit('change:rowVisibility', timelineEvent)"
                 @change:damageType="newType => $.emit('change:damageType', timelineEvent, newType)"
@@ -116,6 +119,7 @@ const fixedColumnCount = ref(2);
 const dataColumnCount = computed(() => {
     let columns = 1;
     if (showMedianDamage.value) columns++;
+    if (showColMistakes.value) columns++;
     if (showColSource.value) columns++;
     if (showColSourceCount.value) columns++;
 

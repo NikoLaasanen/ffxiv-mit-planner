@@ -42,7 +42,7 @@ export const useFFlogsParser = (
                 const abilityName = abilityMap.value.get(event.abilityGameID)?.name ?? 'Unknown';
 
                 // Skip dots and mechanic punishment events
-                if (abilityName === 'Combined DoTs' || abilityName === 'Unmitigated Explosion') continue;
+                if (abilityName === 'Combined DoTs' || abilityName === 'Sustained Damage' || abilityName === 'Explosion' || abilityName === 'Unmitigated Explosion') continue;
 
                 const damage = event.unmitigatedAmount ?? event.amount ?? 0;
 
@@ -140,6 +140,27 @@ export const useFFlogsParser = (
 
         return mistakes;
     };
+    const parseDeathData = (events: fflogs_event[], firstEventTimestamp: number): PlayerMistake[] => {
+        const mistakes: PlayerMistake[] = [];
+
+        // Process death events
+        for (const event of events) {
+            const actor = actorMap.value.get(event.targetID);
+            if (actor && actor.type == 'Player') {
+                const time = getTimeInSeconds(event.timestamp - firstEventTimestamp);
+                const jobAbbr = fflogsJobMap[actor.subType as string];
+                console.log('Death detected for', actor.name, 'at', time, 'seconds as', jobAbbr, event);
+                mistakes.push({
+                    type: 'Death' as MistakeType,
+                    source: jobAbbr,
+                    timestamp: time,
+                    duration: 0
+                });
+            }
+        }
+
+        return mistakes;
+    };
 
     const isTrackedDebuff = (abilityName: string): boolean => {
         return abilityName === 'Weakness' || abilityName === 'Brink of Death' || abilityName === 'Damage Down';
@@ -210,6 +231,7 @@ export const useFFlogsParser = (
         parseTimelineData,
         parseActiveAbilityData,
         parseDebuffData,
+        parseDeathData,
         parseActiveJobs,
         getTimeInSeconds
     };
