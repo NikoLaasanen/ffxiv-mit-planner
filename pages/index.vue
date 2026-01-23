@@ -178,8 +178,7 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
     plan.value.timeline.title = 'Custom timeline';
 }
 
-const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]) => {
-    console.log('Imported from FFlogs:', newUrl, timelineEvents, players, activeAbilities, mistakes);
+const handleFFlogsImport = (newUrl: string, title: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]) => {
     isPlanLoading.value = true;
 
     // Defer store updates to next event loop so DOM can render loader first
@@ -189,6 +188,7 @@ const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], pla
         planStore.setJobs(players);
         planStore.setActiveAbilities(activeAbilities);
         planStore.setMistakes(mistakes);
+        plan.value.timeline.title = title;
         isPlanLoading.value = false;
     }, 0)
 }

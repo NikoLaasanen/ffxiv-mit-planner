@@ -58,3 +58,33 @@ export async function fetchPlayerDebuffs(reportCode: string, fightId: number, st
 export async function fetchPlayerDeaths(reportCode: string, fightId: number, start = 0) {
     return fetchFFLogsData(reportCode, fightId, 'Deaths', start)
 }
+
+export async function fetchFightData(reportCode: string, fightId: number) {
+    const query = `
+    {
+        reportData {
+            report(code: "${reportCode}") {
+                fights(
+                    fightIDs: [${fightId}]
+                ) {
+                    id
+                    name
+                    encounterID
+                    startTime
+                    endTime
+                    kill
+                    bossPercentage
+                    fightPercentage
+                    difficulty
+                    size
+                }
+            }
+        }
+    }
+    `
+
+    return await $fetch('/api/fflogs', {
+        method: 'POST',
+        body: { query }
+    })
+}

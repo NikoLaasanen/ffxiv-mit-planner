@@ -16,9 +16,12 @@
 import { useDebounceFn } from '@vueuse/core';
 import { JobAbilityKey } from '~/injectionkeys'
 import { useFFlogsParser } from '~/composables/useFFlogsParser';
+import { useToast } from '@/components/ui/toast/use-toast'
+
+const { toast } = useToast()
 
 const emit = defineEmits<{
-    (e: 'urlParsed', url: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]): void
+    (e: 'urlParsed', url: string, title: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]): void
 }>()
 
 const url = ref('')
@@ -54,41 +57,58 @@ const readUrl = useDebounceFn(() => {
 }, 300)
 
 const fetchLog = async () => {
-    let report;
+    let fightReport;
+    let fightTitle = `Fight ${fightId.value}`
     try {
-        const response = await fetchTimelineEvents(reportId.value, fightId.value);
-        report = response?.data?.reportData.report;
+        const response = await fetchFightData(reportId.value, fightId.value);
+        fightReport = response?.data?.reportData.report;
 
         previousReport.value = reportId.value;
         previousFight.value = fightId.value;
+        fightTitle = fightReport?.fights?.[0]?.name || fightTitle;
     } catch (e) {
-        console.error('Error fetching report:', e);
+        previousReport.value = '';
+        previousFight.value = 0;
+        toast({ description: 'Could not fetch fight data', variant: 'destructive' })
+        return;
     }
 
-    if (report) {
-        // Set actors
-        const actors: fflogs_actor[] = report?.masterData?.actors ?? [];
-        actors.forEach(a => actorMap.value.set(a.id, a))
-        // Set abilities
-        const abilities: fflogs_ability[] = report?.masterData?.abilities ?? [];
-        abilities.forEach(a => abilityMap.value.set(a.gameID, a))
-        // Set events
-        const events = (report?.events?.data ?? []) as fflogs_event[];
-
-        const firstEventTimestamp = getFirstEventTimestamp(events);
-        const timeline = parseTimelineData(events, firstEventTimestamp);
-        let players: JobAbbrevation[] = [];
-        let activeAbilities: ActiveAbility[] = [];
-        let mistakes: PlayerMistake[] = [];
-        if (loadPlayerEvents.value) {
-            activeAbilities = await loadPlayerAbilities(firstEventTimestamp);
-            players = parseActiveJobs(activeAbilities);
-            mistakes = await loadPlayerMistakes(firstEventTimestamp);
+    if (fightReport) {
+        let eventReport;
+        try {
+            const response = await fetchTimelineEvents(reportId.value, fightId.value);
+            eventReport = response?.data?.reportData.report;
+        } catch (e) {
+            toast({ description: 'Timeline events not found', variant: 'destructive' })
         }
 
-        if (timeline.length > 0) {
-            emit('urlParsed', url.value, timeline, players, activeAbilities, mistakes);
+        if (eventReport) {
+            // Set actors
+            const actors: fflogs_actor[] = eventReport?.masterData?.actors ?? [];
+            actors.forEach(a => actorMap.value.set(a.id, a))
+            // Set abilities
+            const abilities: fflogs_ability[] = eventReport?.masterData?.abilities ?? [];
+            abilities.forEach(a => abilityMap.value.set(a.gameID, a))
+            // Set events
+            const events = (eventReport?.events?.data ?? []) as fflogs_event[];
+
+            const firstEventTimestamp = getFirstEventTimestamp(events);
+            const timeline = parseTimelineData(events, firstEventTimestamp);
+            let players: JobAbbrevation[] = [];
+            let activeAbilities: ActiveAbility[] = [];
+            let mistakes: PlayerMistake[] = [];
+            if (loadPlayerEvents.value) {
+                activeAbilities = await loadPlayerAbilities(firstEventTimestamp);
+                players = parseActiveJobs(activeAbilities);
+                mistakes = await loadPlayerMistakes(firstEventTimestamp);
+            }
+
+            if (timeline.length > 0) {
+                emit('urlParsed', url.value, fightTitle, timeline, players, activeAbilities, mistakes);
+            }
         }
+    } else {
+        toast({ description: 'Fight data not found', variant: 'destructive' })
     }
 }
 
@@ -98,7 +118,7 @@ const loadPlayerAbilities = async (firstEventTimestamp: number): Promise<ActiveA
         const response = await fetchActiveAbilities(reportId.value, fightId.value);
         report = response?.data?.reportData.report;
     } catch (e) {
-        console.error('Error fetching player buffs:', e);
+        toast({ description: 'Ability data not found', variant: 'destructive' })
     }
 
     if (report) {
@@ -116,7 +136,7 @@ const loadPlayerMistakes = async (firstEventTimestamp: number): Promise<PlayerMi
         const response = await fetchPlayerDebuffs(reportId.value, fightId.value);
         report = response?.data?.reportData.report;
     } catch (e) {
-        console.error('Error fetching player debuffs:', e);
+        toast({ description: 'Debuff data not found', variant: 'destructive' })
     }
 
     if (report) {
@@ -129,7 +149,7 @@ const loadPlayerMistakes = async (firstEventTimestamp: number): Promise<PlayerMi
         const response = await fetchPlayerDeaths(reportId.value, fightId.value);
         report = response?.data?.reportData.report;
     } catch (e) {
-        console.error('Error fetching player deaths:', e);
+        toast({ description: 'Death data not found', variant: 'destructive' })
     }
 
     if (report) {
