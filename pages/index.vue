@@ -1,6 +1,16 @@
 <template>
     <div id="main-content" class="flex flex-col gap-4">
-        <template v-if="plan.timeline.events.length > 0">
+        <Card v-if="isPlanLoading">
+            <CardHeader>
+                <CardTitle>
+                    Loading timeline...
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <PlanSkeleton />
+            </CardContent>
+        </Card>
+        <template v-else-if="plan.timeline.events.length > 0">
             <Card>
                 <CardHeader>
                     <CardDescription>
@@ -131,7 +141,7 @@ const { toast } = useToast()
 const planStore = usePlanStore();
 const myPlansStore = useMyPlansStore();
 const { latest: myLatest } = storeToRefs(myPlansStore);
-const { plan } = storeToRefs(planStore)
+const { plan, isPlanLoading } = storeToRefs(planStore)
 const planTitle = ref('My Awesome Plan');
 const fflogsUrl = ref('');
 
@@ -169,11 +179,18 @@ const addNewTimelineEvent = (newEvent: TimelineEvent) => {
 }
 
 const handleFFlogsImport = (newUrl: string, timelineEvents: TimelineEvent[], players: JobAbbrevation[], activeAbilities: ActiveAbility[], mistakes: PlayerMistake[]) => {
-    fflogsUrl.value = newUrl;
-    planStore.setTimelineEvents(timelineEvents)
-    planStore.setJobs(players);
-    planStore.setActiveAbilities(activeAbilities);
-    planStore.setMistakes(mistakes);
+    console.log('Imported from FFlogs:', newUrl, timelineEvents, players, activeAbilities, mistakes);
+    isPlanLoading.value = true;
+
+    // Defer store updates to next event loop so DOM can render loader first
+    setTimeout(() => {
+        fflogsUrl.value = newUrl;
+        planStore.setTimelineEvents(timelineEvents)
+        planStore.setJobs(players);
+        planStore.setActiveAbilities(activeAbilities);
+        planStore.setMistakes(mistakes);
+        isPlanLoading.value = false;
+    }, 0)
 }
 
 const {

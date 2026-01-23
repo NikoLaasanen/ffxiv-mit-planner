@@ -71,6 +71,7 @@ const emit = defineEmits<{
     (e: 'change:damageType', timelineEvent: TimelineEvent, damageType: DamageType): void,
     (e: 'add:rowDamageValue', timelineEvent: TimelineEvent, newValue: number): void,
     (e: 'remove:rowDamageValue', timelineEvent: TimelineEvent, removedKey: number): void,
+    (e: 'init:complete'): void,
 }>()
 
 const props = defineProps({
@@ -79,6 +80,7 @@ const props = defineProps({
     activeJobs: Array as PropType<JobAbbrevation[]>
 })
 
+const { isPlanLoading } = storeToRefs(usePlanStore());
 const preferencesStore = usePreferencesStore();
 const { showAutoAttacks, showMedianDamage, showColSource, showColSourceCount, showColMistakes } = storeToRefs(preferencesStore);
 const showHiddenRows = ref(false);
@@ -110,17 +112,6 @@ const toggleActiveJob = (jobAbbr: JobAbbrevation) => {
 
 const getJob = (jobAbbr: JobAbbrevation) => jobs?.value.find(job => job.abbr === jobAbbr);
 
-onMounted(() => {
-    // Set active jobs based on initial load
-    activeJobs.value = [...new Set(props.activeAbilities?.map(item => item.source))];
-    // Add other preselected jobs
-    props.activeJobs?.forEach(jobAbbr => {
-        if (!activeJobs.value.includes(jobAbbr)) {
-            activeJobs.value.push(jobAbbr)
-        }
-    })
-})
-
 const fixedColumnCount = ref(2);
 const dataColumnCount = computed(() => {
     let columns = 1;
@@ -131,6 +122,27 @@ const dataColumnCount = computed(() => {
     return columns;
 });
 const jobColumnCount = computed(() => activeJobs.value.length ?? 0);
+
+const isLoading = ref(false);
+onMounted(() => {
+    isLoading.value = true;
+    // Set active jobs based on initial load
+    activeJobs.value = [...new Set(props.activeAbilities?.map(item => item.source))];
+    // Add other preselected jobs
+    props.activeJobs?.forEach(jobAbbr => {
+        if (!activeJobs.value.includes(jobAbbr)) {
+            activeJobs.value.push(jobAbbr)
+        }
+    })
+})
+
+// When rendering any changes is done
+onUpdated(() => {
+    if (isLoading.value) {
+        isLoading.value = false;
+        isPlanLoading.value = false;
+    }
+})
 </script>
 
 <style scoped>

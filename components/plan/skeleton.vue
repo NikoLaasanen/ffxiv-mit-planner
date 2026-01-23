@@ -5,10 +5,11 @@
             <Skeleton v-for="job in jobs" :key="job.abbr" class="h-[40px] w-[56px]" />
         </div>
         <Skeleton class="h-4 w-[200px]" />
+        <LoadingIcon class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { JobKey, ActiveJobsKey } from '~/injectionkeys'
+import { JobKey } from '~/injectionkeys'
 const jobs = inject(JobKey, null)
 </script>

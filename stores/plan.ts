@@ -13,7 +13,8 @@ export const usePlanStore = defineStore('plan', {
             activeAbilities: [] as ActiveAbility[],
             jobs: [] as JobAbbrevation[]
         } as Plan),
-        mistakes: ref([] as PlayerMistake[])
+        mistakes: ref([] as PlayerMistake[]),
+        isPlanLoading: ref(false)
     }),
     getters: {
         isAbilityActivated: (state) => {

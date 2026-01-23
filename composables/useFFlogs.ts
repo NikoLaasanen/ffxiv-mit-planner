@@ -54,3 +54,7 @@ export async function fetchActiveAbilities(reportCode: string, fightId: number, 
 export async function fetchPlayerDebuffs(reportCode: string, fightId: number, start = 0) {
     return fetchFFLogsData(reportCode, fightId, 'Debuffs', start)
 }
+
+export async function fetchPlayerDeaths(reportCode: string, fightId: number, start = 0) {
+    return fetchFFLogsData(reportCode, fightId, 'Deaths', start)
+}
